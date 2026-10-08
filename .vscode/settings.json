@@ -1,0 +1,8 @@
+{
+    // Серые inline-подсказки (AI-дополнение кода)
+    "editor.inlineSuggest.enabled": false,
+
+    // Copilot: дополнение кода и next edit suggestions
+    "github.copilot.enable": { "*": false },
+    "github.copilot.nextEditSuggestions.enabled": false
+}
