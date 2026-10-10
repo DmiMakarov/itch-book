@@ -94,7 +94,7 @@ namespace itch{
         return *this;
     }
     
-    std::span<const std::byte> MappedFile::bytes()  noexcept
+    std::span<const std::byte> MappedFile::bytes() const noexcept
     {
         return std::span{addr, size};
     }

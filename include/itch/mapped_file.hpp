@@ -1,5 +1,5 @@
-#ifndef MAPPED_FILE
-#define MAPPED_FILE
+#ifndef ITCH_MAPPED_FILE
+#define ITCH_MAPPED_FILE
 
 #include<cstddef>
 #include<span>
@@ -30,8 +30,8 @@ public:
     MappedFile(MappedFile&& other) noexcept;
     MappedFile& operator=(MappedFile&& other) noexcept;
 
-    std::span<const std::byte> bytes() noexcept;
+    std::span<const std::byte> bytes() const noexcept;
 };
 
 }
-#endif // MAPPED_FILE
+#endif // ITCH_MAPPED_FILE
