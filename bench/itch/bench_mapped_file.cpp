@@ -51,7 +51,7 @@ namespace
         TempFile(const TempFile&) = delete;
         TempFile& operator=(const TempFile&) = delete;
 
-        const fs::path& path() const noexcept { return path_; }
+        [[nodiscard]] const fs::path& path() const noexcept { return path_; }
 
     private:
         fs::path path_;

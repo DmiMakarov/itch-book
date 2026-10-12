@@ -30,7 +30,7 @@ public:
     MappedFile(MappedFile&& other) noexcept;
     MappedFile& operator=(MappedFile&& other) noexcept;
 
-    std::span<const std::byte> bytes() const noexcept;
+    [[nodiscard]] std::span<const std::byte> bytes() const noexcept;
 };
 
 }

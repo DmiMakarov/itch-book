@@ -8,14 +8,17 @@ set(CMAKE_CXX_EXTENSIONS OFF)        # -std=c++20, а не -std=gnu++20
 find_package(GTest REQUIRED)
 find_package(benchmark REQUIRED)
 
-add_library(itch STATIC src/itch/mapped_file.cpp) 
+add_library(itch STATIC
+    src/itch/mapped_file.cpp
+    src/itch/itch_reader.cpp)
 target_include_directories(itch PUBLIC include)
 target_compile_options(itch PUBLIC -Wall -Wextra -Wpedantic -Werror)
 
 enable_testing()
 add_executable(tests
     tests/itch/test_endian.cpp
-    tests/itch/test_mapped_file.cpp)
+    tests/itch/test_mapped_file.cpp
+    tests/itch/test_itch_reader.cpp)
 target_link_libraries(tests PRIVATE itch GTest::gtest_main)
 add_test(NAME tests COMMAND tests)
 
@@ -23,3 +26,7 @@ add_executable(bench
     bench/itch/bench_endian.cpp
     bench/itch/bench_mapped_file.cpp)
 target_link_libraries(bench PRIVATE itch benchmark::benchmark_main)
+
+add_executable(main
+    src/main.cpp)
+target_link_libraries(main PRIVATE itch)
