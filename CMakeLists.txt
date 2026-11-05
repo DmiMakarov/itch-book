@@ -18,7 +18,17 @@ enable_testing()
 add_executable(tests
     tests/itch/test_endian.cpp
     tests/itch/test_mapped_file.cpp
-    tests/itch/test_itch_reader.cpp)
+    tests/itch/test_itch_reader.cpp
+    tests/itch/msg/test_header.cpp
+    tests/itch/msg/test_sys_event.cpp
+    tests/itch/msg/test_alpha.cpp
+    tests/itch/msg/test_price.cpp
+    tests/itch/msg/test_add_order.cpp
+    tests/itch/msg/test_dispatcher.cpp
+    tests/itch/msg/test_msg_validation.cpp
+    tests/itch/msg/test_reference_msgs.cpp
+    tests/itch/msg/test_order_msgs.cpp
+    tests/itch/msg/test_trade_msgs.cpp)
 target_link_libraries(tests PRIVATE itch GTest::gtest_main)
 add_test(NAME tests COMMAND tests)
 

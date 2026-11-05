@@ -5,10 +5,10 @@
 #include <cstdint>
 #include <optional>
 #include <span>
-#include <stdexcept>
-#include <string>
 
 #include "itch/msg_type.hpp"
+#include "itch/error_handling/format_error.hpp"
+
 
 namespace itch
 {
@@ -19,18 +19,6 @@ struct Message
     std::span<const std::byte> bytes; // всё сообщение от байта типа, без 2-байтового префикса длины
     std::size_t offset;               // где в буфере начинается запись (её префикс длины)
     std::uint64_t timestamp;
-};
-
-// Данные не соответствуют формату; offset — где начинается проблемная запись
-class FormatError : public std::runtime_error
-{
-public:
-    FormatError(const std::string& what, std::size_t offset) : std::runtime_error(what), offset_(offset) {}
-
-    [[nodiscard]] std::size_t offset() const noexcept { return offset_; }
-
-private:
-    std::size_t offset_;
 };
 
 class ItchReader
