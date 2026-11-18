@@ -1,0 +1,325 @@
+2026-11-18T21:53:55+03:00
+Running ./build/release/bench
+Run on (12 X 3692.98 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 1024 KiB (x6)
+  L3 Unified 32768 KiB (x1)
+Load Average: 1.30, 1.19, 1.09
+***WARNING*** Library was built as DEBUG. Timings may be affected.
+---------------------------------------------------------------------------------------------------------
+Benchmark                                                               Time             CPU   Iterations
+---------------------------------------------------------------------------------------------------------
+BeEndianBenchmark<2, itch::endian::be16>                            0.429 ns        0.429 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.429 ns        0.429 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.435 ns        0.435 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.438 ns        0.438 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.451 ns        0.451 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.425 ns        0.425 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.433 ns        0.433 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.431 ns        0.431 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.427 ns        0.427 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.430 ns        0.430 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.434 ns        0.434 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.452 ns        0.452 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.431 ns        0.429 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.425 ns        0.425 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.439 ns        0.439 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.428 ns        0.428 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.423 ns        0.423 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.429 ns        0.429 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.430 ns        0.430 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>                            0.429 ns        0.428 ns   1000000000
+BeEndianBenchmark<2, itch::endian::be16>_mean                       0.432 ns        0.432 ns           20
+BeEndianBenchmark<2, itch::endian::be16>_median                     0.430 ns        0.430 ns           20
+BeEndianBenchmark<2, itch::endian::be16>_stddev                     0.008 ns        0.008 ns           20
+BeEndianBenchmark<2, itch::endian::be16>_cv                          1.75 %          1.76 %            20
+BeEndianBenchmark<4, itch::endian::be32>                            0.424 ns        0.424 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.464 ns        0.464 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.437 ns        0.437 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.450 ns        0.450 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.448 ns        0.448 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.422 ns        0.422 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.426 ns        0.426 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.435 ns        0.435 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.422 ns        0.422 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.436 ns        0.436 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.426 ns        0.426 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.426 ns        0.426 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.428 ns        0.428 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.451 ns        0.450 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.439 ns        0.439 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.434 ns        0.434 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.433 ns        0.433 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.435 ns        0.435 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.435 ns        0.435 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>                            0.438 ns        0.438 ns   1000000000
+BeEndianBenchmark<4, itch::endian::be32>_mean                       0.436 ns        0.436 ns           20
+BeEndianBenchmark<4, itch::endian::be32>_median                     0.435 ns        0.435 ns           20
+BeEndianBenchmark<4, itch::endian::be32>_stddev                     0.011 ns        0.011 ns           20
+BeEndianBenchmark<4, itch::endian::be32>_cv                          2.51 %          2.49 %            20
+BeEndianBenchmark<6, itch::endian::be48>                             1.02 ns         1.02 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                             1.01 ns         1.01 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                            0.990 ns        0.989 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                             1.11 ns         1.11 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                             1.04 ns         1.04 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                            0.983 ns        0.983 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                            0.996 ns        0.996 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                            0.992 ns        0.992 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                            0.985 ns        0.985 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                             1.01 ns         1.01 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                            0.995 ns        0.995 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                            0.991 ns        0.991 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                             1.00 ns         1.00 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                             1.01 ns         1.01 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                             1.00 ns         1.00 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                             1.01 ns         1.01 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                            0.973 ns        0.973 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                            0.999 ns        0.999 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                             1.14 ns         1.14 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>                             1.01 ns         1.01 ns    700033602
+BeEndianBenchmark<6, itch::endian::be48>_mean                        1.01 ns         1.01 ns           20
+BeEndianBenchmark<6, itch::endian::be48>_median                      1.00 ns         1.00 ns           20
+BeEndianBenchmark<6, itch::endian::be48>_stddev                     0.041 ns        0.041 ns           20
+BeEndianBenchmark<6, itch::endian::be48>_cv                          4.08 %          4.07 %            20
+BeEndianBenchmark<8, itch::endian::be64>                            0.503 ns        0.503 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.481 ns        0.481 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.480 ns        0.480 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.471 ns        0.471 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.476 ns        0.476 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.474 ns        0.474 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.478 ns        0.478 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.483 ns        0.483 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.477 ns        0.477 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.471 ns        0.471 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.475 ns        0.475 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.480 ns        0.481 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.475 ns        0.475 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.486 ns        0.486 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.482 ns        0.482 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.496 ns        0.496 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.509 ns        0.509 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.477 ns        0.477 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.491 ns        0.491 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>                            0.521 ns        0.521 ns   1000000000
+BeEndianBenchmark<8, itch::endian::be64>_mean                       0.484 ns        0.484 ns           20
+BeEndianBenchmark<8, itch::endian::be64>_median                     0.480 ns        0.480 ns           20
+BeEndianBenchmark<8, itch::endian::be64>_stddev                     0.013 ns        0.013 ns           20
+BeEndianBenchmark<8, itch::endian::be64>_cv                          2.75 %          2.76 %            20
+BM_MapUnmap/4096                                                     5181 ns         5180 ns       124582
+BM_MapUnmap/4096                                                     4662 ns         4662 ns       124582
+BM_MapUnmap/4096                                                     4910 ns         4910 ns       124582
+BM_MapUnmap/4096                                                     4660 ns         4659 ns       124582
+BM_MapUnmap/4096                                                     4649 ns         4649 ns       124582
+BM_MapUnmap/4096                                                     4796 ns         4796 ns       124582
+BM_MapUnmap/4096                                                     4862 ns         4863 ns       124582
+BM_MapUnmap/4096                                                     5306 ns         5306 ns       124582
+BM_MapUnmap/4096                                                     4823 ns         4823 ns       124582
+BM_MapUnmap/4096                                                     4574 ns         4574 ns       124582
+BM_MapUnmap/4096                                                     4923 ns         4923 ns       124582
+BM_MapUnmap/4096                                                     4690 ns         4689 ns       124582
+BM_MapUnmap/4096                                                     4638 ns         4638 ns       124582
+BM_MapUnmap/4096                                                     4814 ns         4814 ns       124582
+BM_MapUnmap/4096                                                     5150 ns         5150 ns       124582
+BM_MapUnmap/4096                                                     5139 ns         5131 ns       124582
+BM_MapUnmap/4096                                                     4811 ns         4811 ns       124582
+BM_MapUnmap/4096                                                     6121 ns         6116 ns       124582
+BM_MapUnmap/4096                                                     5203 ns         5197 ns       124582
+BM_MapUnmap/4096                                                     4887 ns         4886 ns       124582
+BM_MapUnmap/4096_mean                                                4940 ns         4939 ns           20
+BM_MapUnmap/4096_median                                              4843 ns         4843 ns           20
+BM_MapUnmap/4096_stddev                                               351 ns          350 ns           20
+BM_MapUnmap/4096_cv                                                  7.11 %          7.08 %            20
+BM_MapUnmap/1048576                                                  5343 ns         5342 ns       100000
+BM_MapUnmap/1048576                                                  4992 ns         4988 ns       100000
+BM_MapUnmap/1048576                                                  4938 ns         4929 ns       100000
+BM_MapUnmap/1048576                                                  5280 ns         5278 ns       100000
+BM_MapUnmap/1048576                                                  5134 ns         5127 ns       100000
+BM_MapUnmap/1048576                                                  4866 ns         4841 ns       100000
+BM_MapUnmap/1048576                                                  4719 ns         4717 ns       100000
+BM_MapUnmap/1048576                                                  4938 ns         4937 ns       100000
+BM_MapUnmap/1048576                                                  4754 ns         4753 ns       100000
+BM_MapUnmap/1048576                                                  4685 ns         4683 ns       100000
+BM_MapUnmap/1048576                                                  4800 ns         4799 ns       100000
+BM_MapUnmap/1048576                                                  4945 ns         4920 ns       100000
+BM_MapUnmap/1048576                                                  4861 ns         4854 ns       100000
+BM_MapUnmap/1048576                                                  4778 ns         4778 ns       100000
+BM_MapUnmap/1048576                                                  4832 ns         4831 ns       100000
+BM_MapUnmap/1048576                                                  5175 ns         5162 ns       100000
+BM_MapUnmap/1048576                                                  5300 ns         5300 ns       100000
+BM_MapUnmap/1048576                                                  5757 ns         5756 ns       100000
+BM_MapUnmap/1048576                                                  4914 ns         4913 ns       100000
+BM_MapUnmap/1048576                                                  5501 ns         5499 ns       100000
+BM_MapUnmap/1048576_mean                                             5025 ns         5020 ns           20
+BM_MapUnmap/1048576_median                                           4938 ns         4924 ns           20
+BM_MapUnmap/1048576_stddev                                            286 ns          287 ns           20
+BM_MapUnmap/1048576_cv                                               5.70 %          5.72 %            20
+BM_MapUnmap/67108864                                                 5369 ns         5368 ns       127411
+BM_MapUnmap/67108864                                                 5170 ns         5170 ns       127411
+BM_MapUnmap/67108864                                                 5503 ns         5503 ns       127411
+BM_MapUnmap/67108864                                                 5296 ns         5296 ns       127411
+BM_MapUnmap/67108864                                                 5065 ns         5058 ns       127411
+BM_MapUnmap/67108864                                                 5162 ns         5146 ns       127411
+BM_MapUnmap/67108864                                                 5475 ns         5473 ns       127411
+BM_MapUnmap/67108864                                                 5185 ns         5185 ns       127411
+BM_MapUnmap/67108864                                                 5196 ns         5196 ns       127411
+BM_MapUnmap/67108864                                                 5121 ns         5121 ns       127411
+BM_MapUnmap/67108864                                                 5302 ns         5297 ns       127411
+BM_MapUnmap/67108864                                                 5396 ns         5391 ns       127411
+BM_MapUnmap/67108864                                                 5300 ns         5301 ns       127411
+BM_MapUnmap/67108864                                                 5803 ns         5803 ns       127411
+BM_MapUnmap/67108864                                                 5391 ns         5361 ns       127411
+BM_MapUnmap/67108864                                                 5243 ns         5244 ns       127411
+BM_MapUnmap/67108864                                                 5150 ns         5151 ns       127411
+BM_MapUnmap/67108864                                                 5299 ns         5295 ns       127411
+BM_MapUnmap/67108864                                                 5089 ns         5089 ns       127411
+BM_MapUnmap/67108864                                                 5134 ns         5129 ns       127411
+BM_MapUnmap/67108864_mean                                            5283 ns         5279 ns           20
+BM_MapUnmap/67108864_median                                          5270 ns         5269 ns           20
+BM_MapUnmap/67108864_stddev                                           176 ns          176 ns           20
+BM_MapUnmap/67108864_cv                                              3.32 %          3.33 %            20
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  26.1 ms         26.1 ms           25 bytes_per_second=2.39035Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  24.3 ms         24.3 ms           25 bytes_per_second=2.56988Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  24.8 ms         24.8 ms           25 bytes_per_second=2.52073Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  25.8 ms         25.8 ms           25 bytes_per_second=2.41994Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  24.6 ms         24.6 ms           25 bytes_per_second=2.54044Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  25.6 ms         25.6 ms           25 bytes_per_second=2.44317Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  25.0 ms         25.0 ms           25 bytes_per_second=2.49899Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  25.5 ms         25.5 ms           25 bytes_per_second=2.45445Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  26.0 ms         26.0 ms           25 bytes_per_second=2.40199Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  29.5 ms         29.5 ms           25 bytes_per_second=2.1153Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  25.6 ms         25.6 ms           25 bytes_per_second=2.44378Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  24.9 ms         24.9 ms           25 bytes_per_second=2.50996Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  25.0 ms         25.0 ms           25 bytes_per_second=2.50102Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  25.2 ms         25.2 ms           25 bytes_per_second=2.48338Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  25.3 ms         25.3 ms           25 bytes_per_second=2.47076Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  25.0 ms         25.0 ms           25 bytes_per_second=2.50375Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  25.7 ms         25.7 ms           25 bytes_per_second=2.43434Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  25.1 ms         25.1 ms           25 bytes_per_second=2.48668Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  26.2 ms         26.2 ms           25 bytes_per_second=2.38233Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864                  24.6 ms         24.6 ms           25 bytes_per_second=2.54122Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864_mean             25.5 ms         25.5 ms           20 bytes_per_second=2.45562Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864_median           25.2 ms         25.2 ms           20 bytes_per_second=2.47707Gi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864_stddev           1.09 ms         1.09 ms           20 bytes_per_second=97.8063Mi/s
+BM_MapAndScan<itch::AccessPattern::Normal>/67108864_cv               4.29 %          4.29 %            20 bytes_per_second=3.89%
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              26.1 ms         26.1 ms           27 bytes_per_second=2.39667Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              25.0 ms         25.0 ms           27 bytes_per_second=2.49751Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              25.9 ms         25.9 ms           27 bytes_per_second=2.41001Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              24.8 ms         24.8 ms           27 bytes_per_second=2.51608Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              25.0 ms         25.0 ms           27 bytes_per_second=2.49538Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              28.3 ms         28.3 ms           27 bytes_per_second=2.20698Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              25.0 ms         25.0 ms           27 bytes_per_second=2.50246Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              24.7 ms         24.7 ms           27 bytes_per_second=2.53025Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              24.9 ms         24.9 ms           27 bytes_per_second=2.50935Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              24.2 ms         24.2 ms           27 bytes_per_second=2.58346Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              25.8 ms         25.8 ms           27 bytes_per_second=2.42018Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              25.6 ms         25.6 ms           27 bytes_per_second=2.4385Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              26.7 ms         26.7 ms           27 bytes_per_second=2.34364Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              25.7 ms         25.7 ms           27 bytes_per_second=2.43502Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              25.4 ms         25.4 ms           27 bytes_per_second=2.46239Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              26.4 ms         26.4 ms           27 bytes_per_second=2.37042Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              25.1 ms         25.1 ms           27 bytes_per_second=2.48861Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              24.4 ms         24.4 ms           27 bytes_per_second=2.56179Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              25.7 ms         25.7 ms           27 bytes_per_second=2.42784Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864              24.8 ms         24.8 ms           27 bytes_per_second=2.5225Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864_mean         25.5 ms         25.5 ms           20 bytes_per_second=2.45595Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864_median       25.2 ms         25.2 ms           20 bytes_per_second=2.4755Gi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864_stddev      0.933 ms        0.933 ms           20 bytes_per_second=88.1442Mi/s
+BM_MapAndScan<itch::AccessPattern::Sequential>/67108864_cv           3.66 %          3.66 %            20 bytes_per_second=3.50%
+BM_ScanMapped/67108864                                               20.5 ms         20.5 ms           39 bytes_per_second=3.056Gi/s
+BM_ScanMapped/67108864                                               18.9 ms         18.9 ms           39 bytes_per_second=3.29971Gi/s
+BM_ScanMapped/67108864                                               18.6 ms         18.6 ms           39 bytes_per_second=3.36723Gi/s
+BM_ScanMapped/67108864                                               18.0 ms         18.0 ms           39 bytes_per_second=3.46945Gi/s
+BM_ScanMapped/67108864                                               18.7 ms         18.7 ms           39 bytes_per_second=3.34892Gi/s
+BM_ScanMapped/67108864                                               18.7 ms         18.7 ms           39 bytes_per_second=3.34627Gi/s
+BM_ScanMapped/67108864                                               19.1 ms         19.1 ms           39 bytes_per_second=3.27431Gi/s
+BM_ScanMapped/67108864                                               19.2 ms         19.2 ms           39 bytes_per_second=3.25812Gi/s
+BM_ScanMapped/67108864                                               18.8 ms         18.8 ms           39 bytes_per_second=3.3186Gi/s
+BM_ScanMapped/67108864                                               18.3 ms         18.3 ms           39 bytes_per_second=3.41393Gi/s
+BM_ScanMapped/67108864                                               18.7 ms         18.7 ms           39 bytes_per_second=3.34076Gi/s
+BM_ScanMapped/67108864                                               18.8 ms         18.8 ms           39 bytes_per_second=3.31942Gi/s
+BM_ScanMapped/67108864                                               18.4 ms         18.4 ms           39 bytes_per_second=3.39255Gi/s
+BM_ScanMapped/67108864                                               19.5 ms         19.5 ms           39 bytes_per_second=3.20655Gi/s
+BM_ScanMapped/67108864                                               20.2 ms         20.2 ms           39 bytes_per_second=3.09534Gi/s
+BM_ScanMapped/67108864                                               19.0 ms         19.0 ms           39 bytes_per_second=3.29388Gi/s
+BM_ScanMapped/67108864                                               19.0 ms         19.0 ms           39 bytes_per_second=3.28695Gi/s
+BM_ScanMapped/67108864                                               19.0 ms         19.0 ms           39 bytes_per_second=3.28789Gi/s
+BM_ScanMapped/67108864                                               18.7 ms         18.7 ms           39 bytes_per_second=3.34505Gi/s
+BM_ScanMapped/67108864                                               19.1 ms         19.1 ms           39 bytes_per_second=3.27516Gi/s
+BM_ScanMapped/67108864_mean                                          19.0 ms         19.0 ms           20 bytes_per_second=3.2998Gi/s
+BM_ScanMapped/67108864_median                                        18.9 ms         18.9 ms           20 bytes_per_second=3.30915Gi/s
+BM_ScanMapped/67108864_stddev                                       0.573 ms        0.572 ms           20 bytes_per_second=98.9088Mi/s
+BM_ScanMapped/67108864_cv                                            3.02 %          3.02 %            20 bytes_per_second=2.93%
+BM_DispatchAll                                                       98.8 ms         98.8 ms7 bytes_per_second=2.53111Gi/s items_per_second=79.4237M/s
+BM_DispatchAll                                                        101 ms          101 ms7 bytes_per_second=2.4687Gi/s items_per_second=77.4654M/s
+BM_DispatchAll                                                       95.1 ms         95.1 ms7 bytes_per_second=2.62904Gi/s items_per_second=82.4968M/s
+BM_DispatchAll                                                       99.8 ms         99.8 ms7 bytes_per_second=2.50603Gi/s items_per_second=78.6369M/s
+BM_DispatchAll                                                       94.8 ms         94.8 ms7 bytes_per_second=2.63664Gi/s items_per_second=82.7353M/s
+BM_DispatchAll                                                       97.1 ms         97.1 ms7 bytes_per_second=2.57509Gi/s items_per_second=80.8037M/s
+BM_DispatchAll                                                       94.2 ms         94.2 ms7 bytes_per_second=2.65302Gi/s items_per_second=83.2493M/s
+BM_DispatchAll                                                       96.6 ms         96.6 ms7 bytes_per_second=2.58797Gi/s items_per_second=81.208M/s
+BM_DispatchAll                                                        105 ms          105 ms7 bytes_per_second=2.37456Gi/s items_per_second=74.5114M/s
+BM_DispatchAll                                                       95.9 ms         95.9 ms7 bytes_per_second=2.60575Gi/s items_per_second=81.7658M/s
+BM_DispatchAll                                                       92.9 ms         92.9 ms7 bytes_per_second=2.6924Gi/s items_per_second=84.4849M/s
+BM_DispatchAll                                                       95.8 ms         95.8 ms7 bytes_per_second=2.61059Gi/s items_per_second=81.9177M/s
+BM_DispatchAll                                                       95.5 ms         95.6 ms7 bytes_per_second=2.61643Gi/s items_per_second=82.101M/s
+BM_DispatchAll                                                       93.9 ms         93.9 ms7 bytes_per_second=2.66283Gi/s items_per_second=83.5569M/s
+BM_DispatchAll                                                       94.5 ms         94.5 ms7 bytes_per_second=2.64621Gi/s items_per_second=83.0356M/s
+BM_DispatchAll                                                       96.8 ms         96.8 ms7 bytes_per_second=2.58237Gi/s items_per_second=81.0322M/s
+BM_DispatchAll                                                       99.1 ms         99.1 ms7 bytes_per_second=2.52251Gi/s items_per_second=79.1538M/s
+BM_DispatchAll                                                       94.4 ms         94.4 ms7 bytes_per_second=2.64872Gi/s items_per_second=83.1141M/s
+BM_DispatchAll                                                       95.6 ms         95.6 ms7 bytes_per_second=2.61546Gi/s items_per_second=82.0707M/s
+BM_DispatchAll                                                       99.8 ms         99.8 ms7 bytes_per_second=2.5048Gi/s items_per_second=78.5981M/s
+BM_DispatchAll_mean                                                  96.9 ms         96.9 ms           20 bytes_per_second=2.58351Gi/s items_per_second=81.068M/s
+BM_DispatchAll_median                                                95.9 ms         95.9 ms           20 bytes_per_second=2.60817Gi/s items_per_second=81.8417M/s
+BM_DispatchAll_stddev                                                3.01 ms         3.01 ms           20 bytes_per_second=79.6628Mi/s items_per_second=2.44115M/s
+BM_DispatchAll_cv                                                    3.11 %          3.11 %            20 bytes_per_second=3.01% items_per_second=3.01%
+BM_DispatchFrame                                                     33.1 ms         33.1 ms           22 bytes_per_second=7.56233Gi/s items_per_second=237.299M/s
+BM_DispatchFrame                                                     33.6 ms         33.6 ms           22 bytes_per_second=7.43313Gi/s items_per_second=233.244M/s
+BM_DispatchFrame                                                     33.3 ms         33.3 ms           22 bytes_per_second=7.51255Gi/s items_per_second=235.736M/s
+BM_DispatchFrame                                                     35.7 ms         35.7 ms           22 bytes_per_second=7.00998Gi/s items_per_second=219.966M/s
+BM_DispatchFrame                                                     33.0 ms         33.0 ms           22 bytes_per_second=7.58261Gi/s items_per_second=237.935M/s
+BM_DispatchFrame                                                     32.9 ms         32.9 ms           22 bytes_per_second=7.60117Gi/s items_per_second=238.517M/s
+BM_DispatchFrame                                                     31.7 ms         31.7 ms           22 bytes_per_second=7.88809Gi/s items_per_second=247.521M/s
+BM_DispatchFrame                                                     32.2 ms         32.2 ms           22 bytes_per_second=7.75272Gi/s items_per_second=243.273M/s
+BM_DispatchFrame                                                     33.5 ms         33.5 ms           22 bytes_per_second=7.46213Gi/s items_per_second=234.155M/s
+BM_DispatchFrame                                                     31.8 ms         31.8 ms           22 bytes_per_second=7.87123Gi/s items_per_second=246.991M/s
+BM_DispatchFrame                                                     31.9 ms         31.9 ms           22 bytes_per_second=7.84407Gi/s items_per_second=246.139M/s
+BM_DispatchFrame                                                     33.7 ms         33.7 ms           22 bytes_per_second=7.42848Gi/s items_per_second=233.099M/s
+BM_DispatchFrame                                                     33.3 ms         33.3 ms           22 bytes_per_second=7.50043Gi/s items_per_second=235.356M/s
+BM_DispatchFrame                                                     31.8 ms         31.8 ms           22 bytes_per_second=7.86772Gi/s items_per_second=246.881M/s
+BM_DispatchFrame                                                     34.5 ms         34.5 ms           22 bytes_per_second=7.24331Gi/s items_per_second=227.288M/s
+BM_DispatchFrame                                                     34.4 ms         34.4 ms           22 bytes_per_second=7.2665Gi/s items_per_second=228.016M/s
+BM_DispatchFrame                                                     31.8 ms         31.8 ms           22 bytes_per_second=7.86172Gi/s items_per_second=246.693M/s
+BM_DispatchFrame                                                     34.2 ms         34.2 ms           22 bytes_per_second=7.31057Gi/s items_per_second=229.398M/s
+BM_DispatchFrame                                                     35.4 ms         35.4 ms           22 bytes_per_second=7.05761Gi/s items_per_second=221.461M/s
+BM_DispatchFrame                                                     31.7 ms         31.7 ms           22 bytes_per_second=7.89632Gi/s items_per_second=247.779M/s
+BM_DispatchFrame_mean                                                33.2 ms         33.2 ms           20 bytes_per_second=7.54763Gi/s items_per_second=236.837M/s
+BM_DispatchFrame_median                                              33.2 ms         33.2 ms           20 bytes_per_second=7.53744Gi/s items_per_second=236.517M/s
+BM_DispatchFrame_stddev                                              1.24 ms         1.24 ms           20 bytes_per_second=285.087Mi/s items_per_second=8.73608M/s
+BM_DispatchFrame_cv                                                  3.74 %          3.74 %            20 bytes_per_second=3.69% items_per_second=3.69%
+BM_DispatchSys                                                       46.7 ms         46.7 ms           16 bytes_per_second=5.3584Gi/s items_per_second=168.141M/s
+BM_DispatchSys                                                       44.0 ms         44.0 ms           16 bytes_per_second=5.67892Gi/s items_per_second=178.199M/s
+BM_DispatchSys                                                       45.1 ms         45.1 ms           16 bytes_per_second=5.54765Gi/s items_per_second=174.08M/s
+BM_DispatchSys                                                       44.6 ms         44.6 ms           16 bytes_per_second=5.61117Gi/s items_per_second=176.073M/s
+BM_DispatchSys                                                       48.7 ms         48.7 ms           16 bytes_per_second=5.12956Gi/s items_per_second=160.961M/s
+BM_DispatchSys                                                       45.9 ms         45.9 ms           16 bytes_per_second=5.44759Gi/s items_per_second=170.94M/s
+BM_DispatchSys                                                       48.1 ms         48.1 ms           16 bytes_per_second=5.19648Gi/s items_per_second=163.06M/s
+BM_DispatchSys                                                       46.8 ms         46.8 ms           16 bytes_per_second=5.34731Gi/s items_per_second=167.794M/s
+BM_DispatchSys                                                       44.0 ms         44.0 ms           16 bytes_per_second=5.68287Gi/s items_per_second=178.323M/s
+BM_DispatchSys                                                       45.6 ms         45.6 ms           16 bytes_per_second=5.48609Gi/s items_per_second=172.148M/s
+BM_DispatchSys                                                       45.0 ms         45.0 ms           16 bytes_per_second=5.5511Gi/s items_per_second=174.188M/s
+BM_DispatchSys                                                       47.7 ms         47.7 ms           16 bytes_per_second=5.23753Gi/s items_per_second=164.348M/s
+BM_DispatchSys                                                       52.7 ms         52.7 ms           16 bytes_per_second=4.74349Gi/s items_per_second=148.846M/s
+BM_DispatchSys                                                       43.7 ms         43.7 ms           16 bytes_per_second=5.72171Gi/s items_per_second=179.542M/s
+BM_DispatchSys                                                       45.9 ms         45.9 ms           16 bytes_per_second=5.44275Gi/s items_per_second=170.788M/s
+BM_DispatchSys                                                       46.6 ms         46.6 ms           16 bytes_per_second=5.36095Gi/s items_per_second=168.221M/s
+BM_DispatchSys                                                       44.0 ms         44.0 ms           16 bytes_per_second=5.67773Gi/s items_per_second=178.162M/s
+BM_DispatchSys                                                       45.9 ms         45.9 ms           16 bytes_per_second=5.45161Gi/s items_per_second=171.066M/s
+BM_DispatchSys                                                       47.7 ms         47.7 ms           16 bytes_per_second=5.244Gi/s items_per_second=164.552M/s
+BM_DispatchSys                                                       44.3 ms         44.3 ms           16 bytes_per_second=5.64216Gi/s items_per_second=177.046M/s
+BM_DispatchSys_mean                                                  46.1 ms         46.1 ms           20 bytes_per_second=5.42795Gi/s items_per_second=170.324M/s
+BM_DispatchSys_median                                                45.9 ms         45.9 ms           20 bytes_per_second=5.4496Gi/s items_per_second=171.003M/s
+BM_DispatchSys_stddev                                                2.15 ms         2.15 ms           20 bytes_per_second=244.948Mi/s items_per_second=7.50607M/s
+BM_DispatchSys_cv                                                    4.66 %          4.66 %            20 bytes_per_second=4.41% items_per_second=4.41%

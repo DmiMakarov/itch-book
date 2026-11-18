@@ -1,0 +1,93 @@
+2026-11-18T22:10:23+03:00
+Running build/release/bench
+Run on (12 X 3692.98 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 1024 KiB (x6)
+  L3 Unified 32768 KiB (x1)
+Load Average: 0.40, 0.77, 0.97
+***WARNING*** Library was built as DEBUG. Timings may be affected.
+-------------------------------------------------------------------------
+Benchmark               Time             CPU   Iterations UserCounters...
+-------------------------------------------------------------------------
+BM_DispatchAll       98.4 ms         98.4 ms           28 bytes_per_second=2.5407Gi/s items_per_second=79.7246M/s
+
+ Performance counter stats for 'build/release/bench --benchmark_filter=BM_DispatchAll --benchmark_min_time=2s':
+
+       18507805520      cycles:u                                                              
+       53095155577      instructions:u                   #    2.87  insn per cycle            
+        6495570488      branches:u                                                            
+         112814591      branch-misses:u                  #    1.74% of all branches           
+         360863897      cache-references:u                                                    
+           3410440      cache-misses:u                   #    0.95% of all cache refs         
+             19710      page-faults:u                                                         
+
+       4.121978956 seconds time elapsed
+
+       3.981255000 seconds user
+       0.140044000 seconds sys
+
+
+2026-11-18T22:11:14+03:00
+Running build/release/bench
+Run on (12 X 3692.98 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 1024 KiB (x6)
+  L3 Unified 32768 KiB (x1)
+Load Average: 0.90, 0.88, 1.00
+***WARNING*** Library was built as DEBUG. Timings may be affected.
+---------------------------------------------------------------------------
+Benchmark                 Time             CPU   Iterations UserCounters...
+---------------------------------------------------------------------------
+BM_DispatchFrame       34.7 ms         34.7 ms           77 bytes_per_second=7.19837Gi/s items_per_second=225.878M/s
+
+ Performance counter stats for 'build/release/bench --benchmark_filter=BM_DispatchFrame --benchmark_min_time=2s':
+
+       14808600736      cycles:u                                                              
+       58787090015      instructions:u                   #    3.97  insn per cycle            
+        7618381638      branches:u                                                            
+             79046      branch-misses:u                  #    0.00% of all branches           
+         774778028      cache-references:u                                                    
+           2596214      cache-misses:u                   #    0.34% of all cache refs         
+             26864      page-faults:u                                                         
+
+       3.403849670 seconds time elapsed
+
+       3.214746000 seconds user
+       0.179706000 seconds sys
+
+
+2026-11-18T22:11:29+03:00
+Running build/release/bench
+Run on (12 X 3692.98 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 1024 KiB (x6)
+  L3 Unified 32768 KiB (x1)
+Load Average: 1.04, 0.91, 1.01
+***WARNING*** Library was built as DEBUG. Timings may be affected.
+-------------------------------------------------------------------------
+Benchmark               Time             CPU   Iterations UserCounters...
+-------------------------------------------------------------------------
+BM_DispatchSys       46.2 ms         46.2 ms           58 bytes_per_second=5.40857Gi/s items_per_second=169.716M/s
+
+ Performance counter stats for 'build/release/bench --benchmark_filter=BM_DispatchSys --benchmark_min_time=2s':
+
+       15518863894      cycles:u                                                              
+       60191289446      instructions:u                   #    3.88  insn per cycle            
+        8143969912      branches:u                                                            
+             62858      branch-misses:u                  #    0.00% of all branches           
+         613849228      cache-references:u                                                    
+           2997516      cache-misses:u                   #    0.49% of all cache refs         
+             17665      page-faults:u                                                         
+
+       3.452762987 seconds time elapsed
+
+       3.268186000 seconds user
+       0.179900000 seconds sys
+
+

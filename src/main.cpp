@@ -9,12 +9,15 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <utility>
 #include <variant>
 
 #include "itch/mapped_file.hpp"
 #include "itch/itch_reader.hpp"
-#include "itch/msg/sys_event.hpp"
 #include "itch/msg/dispatcher.hpp"
+#include "itch/handler/sys_event_handler.hpp"
+#include "itch/handler/all_handler.hpp"
+#include "itch/handler/consume.hpp"
 
 enum class HandlerType : std::uint8_t
 {
@@ -154,68 +157,24 @@ ParseResult parse_args(int argc, char** argv)
     return opt;
 }
 
-// Принимает все типы сообщений: dispatch разбирает каждое.
-// checksum по timestamp — чтобы результат разбора был использован и оптимизатор его не выкинул.
-struct AllHandler
-{
-    std::size_t count = 0;
-    std::uint64_t checksum = 0;
-
-    template <typename Msg>
-    void on(const Msg& msg)
-    {
-        ++count;
-        checksum ^= msg.header.timestamp;
-    }
-};
-
-struct SysEventHandler
-{
-    std::size_t total_count = 0;
-    std::array<std::size_t, 256> distribution{};
-
-    void on(const itch::msg::SysEventMsg& msg)
-    {
-        total_count += 1;
-        distribution[static_cast<std::uint8_t>(msg.code)] += 1;
-    }
-};
-
-// Общее для всех режимов: счётчик по типам и время.
-// Одинаковая работа в цикле во всех режимах — иначе разности между ними нечестные.
-struct RunStats
-{
-    std::array<std::uint64_t, 256> per_type{};
-    std::uint64_t total = 0;
-    std::chrono::nanoseconds elapsed{};
-};
-
+// Тот же цикл consume, что и в бенчмарке; время меряем снаружи, вокруг вызова
 template <typename OnMessage>
-RunStats process(itch::ItchReader& reader, OnMessage on_message)
+std::pair<itch::handler::ConsumeStats, std::chrono::nanoseconds> timed_consume(itch::ItchReader& reader, OnMessage on_message)
 {
-    RunStats stats;
-
     const auto start = std::chrono::steady_clock::now();
+    const auto stats = itch::handler::consume(reader, on_message);
+    const auto elapsed = std::chrono::steady_clock::now() - start;
 
-    while (auto msg = reader.next())
-    {
-        ++stats.per_type[itch::type_index(msg->type)];
-        ++stats.total;
-        on_message(*msg);
-    }
-
-    stats.elapsed = std::chrono::steady_clock::now() - start;
-
-    return stats;
+    return {stats, elapsed};
 }
 
-void print_stats(const RunStats& stats)
+void print_stats(const itch::handler::ConsumeStats& stats, std::chrono::nanoseconds elapsed)
 {
     const auto total = static_cast<double>(stats.total);
-    const auto nanos = static_cast<double>(stats.elapsed.count());
+    const auto nanos = static_cast<double>(elapsed.count());
 
-    std::cout << "Total milliseconds: " << std::chrono::duration_cast<std::chrono::milliseconds>(stats.elapsed) << '\n';
-    if (stats.total != 0 && stats.elapsed.count() != 0)
+    std::cout << "Total milliseconds: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed) << '\n';
+    if (stats.total != 0 && elapsed.count() != 0)
     {
         std::cout << "Nanoseconds per message: " << nanos / total << '\n';
         std::cout << "Messages per second: " << total / nanos * 1e9 << '\n';
@@ -234,30 +193,30 @@ void run_frame(itch::ItchReader& reader)
 {
     std::uint64_t checksum = 0;
 
-    const RunStats stats = process(reader, [&checksum](const itch::Message& msg) { checksum ^= msg.timestamp; });
+    const auto [stats, elapsed] = timed_consume(reader, [&checksum](const itch::Message& msg) { checksum ^= msg.timestamp; });
 
-    print_stats(stats);
+    print_stats(stats, elapsed);
     std::cout << "Checksum: " << checksum << '\n';
 }
 
 void run_all(itch::ItchReader& reader)
 {
-    AllHandler handler{};
+    itch::handler::AllHandler handler{};
 
-    const RunStats stats = process(reader, [&handler](const itch::Message& msg) { itch::dispatch(msg, handler); });
+    const auto [stats, elapsed] = timed_consume(reader, [&handler](const itch::Message& msg) { itch::dispatch(msg, handler); });
 
-    print_stats(stats);
+    print_stats(stats, elapsed);
     std::cout << "Parsed messages: " << handler.count << '\n';
     std::cout << "Checksum: " << handler.checksum << '\n';
 }
 
 void run_sys(itch::ItchReader& reader)
 {
-    SysEventHandler handler{};
+    itch::handler::SysEventHandler handler{};
 
-    const RunStats stats = process(reader, [&handler](const itch::Message& msg) { itch::dispatch(msg, handler); });
+    const auto [stats, elapsed] = timed_consume(reader, [&handler](const itch::Message& msg) { itch::dispatch(msg, handler); });
 
-    print_stats(stats);
+    print_stats(stats, elapsed);
     std::cout << "SysEvent message count: " << handler.total_count << '\n';
 
     for (auto code : itch::msg::event_codes)

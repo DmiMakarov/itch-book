@@ -34,7 +34,8 @@ add_test(NAME tests COMMAND tests)
 
 add_executable(bench
     bench/itch/bench_endian.cpp
-    bench/itch/bench_mapped_file.cpp)
+    bench/itch/bench_mapped_file.cpp
+    bench/itch/bench_parse.cpp)
 target_link_libraries(bench PRIVATE itch benchmark::benchmark_main)
 
 add_executable(main
