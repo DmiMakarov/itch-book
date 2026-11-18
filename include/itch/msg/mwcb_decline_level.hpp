@@ -14,7 +14,7 @@ namespace itch::msg
 {
     struct MwcbDeclineLevelMsg
     {
-        Header header;
+        Header header{};
         Price<8> level1;
         Price<8> level2;
         Price<8> level3;

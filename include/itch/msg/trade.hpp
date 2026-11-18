@@ -20,13 +20,13 @@ namespace itch::msg
     // order_ref с 2010 года всегда 0, side с 2014 года всегда 'B' — но проверяем по спецификации ('B'/'S')
     struct TradeMsg
     {
-        Header header;
-        std::uint64_t order_ref;
-        BuySellIndicator side;
-        std::uint32_t shares;
+        Header header{};
+        std::uint64_t order_ref{};
+        BuySellIndicator side{};
+        std::uint32_t shares{};
         Alpha<8> stock;
         Price<4> price;
-        std::uint64_t match_number;
+        std::uint64_t match_number{};
 
         bool operator==(const TradeMsg& msg) const = default;
 

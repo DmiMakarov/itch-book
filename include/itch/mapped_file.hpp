@@ -2,13 +2,14 @@
 #define ITCH_MAPPED_FILE
 
 #include<cstddef>
+#include<cstdint>
 #include<span>
 #include<filesystem>
 
 
 namespace itch{
 
-enum class AccessPattern { Normal, Sequential }; 
+enum class AccessPattern : std::uint8_t { Normal, Sequential }; 
 
 class MappedFile {
     const std::byte* addr = nullptr;

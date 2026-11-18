@@ -18,10 +18,10 @@ namespace itch::msg
     // и обработчик с on(const auto& m) { m.header... } работает без особых случаев
     struct AddOrderMpidMsg
     {
-        Header header;
-        std::uint64_t order_ref;
-        BuySellIndicator side;
-        std::uint32_t shares;
+        Header header{};
+        std::uint64_t order_ref{};
+        BuySellIndicator side{};
+        std::uint32_t shares{};
         Alpha<8> stock;
         Price<4> price;
         Alpha<4> attribution;

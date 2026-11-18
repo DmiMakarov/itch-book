@@ -31,10 +31,10 @@ namespace itch::msg
 
     struct IpoQuotingPeriodUpdateMsg
     {
-        Header header;
+        Header header{};
         Alpha<8> stock;
-        std::uint32_t release_time_seconds;   // секунды от полуночи, не наносекунды; 0 при отмене
-        IpoReleaseQualifier release_qualifier;
+        std::uint32_t release_time_seconds{};   // секунды от полуночи, не наносекунды; 0 при отмене
+        IpoReleaseQualifier release_qualifier{};
         Price<4> ipo_price;
 
         bool operator==(const IpoQuotingPeriodUpdateMsg& msg) const = default;

@@ -15,9 +15,9 @@ namespace itch::msg
     // Частичная отмена: заявка уменьшается на cancelled_shares, но остаётся в стакане
     struct OrderCancelMsg
     {
-        Header header;
-        std::uint64_t order_ref;
-        std::uint32_t cancelled_shares;
+        Header header{};
+        std::uint64_t order_ref{};
+        std::uint32_t cancelled_shares{};
 
         bool operator==(const OrderCancelMsg& msg) const = default;
 

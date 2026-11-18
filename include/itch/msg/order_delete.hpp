@@ -15,8 +15,8 @@ namespace itch::msg
     // Заявка удаляется из стакана целиком
     struct OrderDeleteMsg
     {
-        Header header;
-        std::uint64_t order_ref;
+        Header header{};
+        std::uint64_t order_ref{};
 
         bool operator==(const OrderDeleteMsg& msg) const = default;
 

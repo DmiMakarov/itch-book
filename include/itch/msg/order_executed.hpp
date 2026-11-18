@@ -15,10 +15,10 @@ namespace itch::msg
     // Цены здесь нет: исполнение по цене заявки из 'A'/'F'
     struct OrderExecutedMsg
     {
-        Header header;
-        std::uint64_t order_ref;
-        std::uint32_t executed_shares;
-        std::uint64_t match_number;
+        Header header{};
+        std::uint64_t order_ref{};
+        std::uint32_t executed_shares{};
+        std::uint64_t match_number{};
 
         bool operator==(const OrderExecutedMsg& msg) const = default;
 

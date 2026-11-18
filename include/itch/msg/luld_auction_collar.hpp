@@ -16,12 +16,12 @@ namespace itch::msg
 {
     struct LuldAuctionCollarMsg
     {
-        Header header;
+        Header header{};
         Alpha<8> stock;
         Price<4> reference_price;
         Price<4> upper_collar_price;
         Price<4> lower_collar_price;
-        std::uint32_t extension;
+        std::uint32_t extension{};
 
         bool operator==(const LuldAuctionCollarMsg& msg) const = default;
 

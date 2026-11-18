@@ -35,8 +35,8 @@ namespace itch::msg
 
     struct SysEventMsg
     {
-        Header header;
-        EventCode code;
+        Header header{};
+        EventCode code{};
 
         bool operator==(const SysEventMsg& msg) const = default;
 
@@ -48,7 +48,7 @@ namespace itch::msg
     {
         Header header = read_header(bytes);
         
-        EventCode code = read_enum<EventCode, 11>(bytes, valid_event_code);
+        auto code = read_enum<EventCode, 11>(bytes, valid_event_code);
 
         SysEventMsg msg{.header=header, .code=code};
 

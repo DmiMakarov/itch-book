@@ -9,9 +9,9 @@ namespace itch::msg
 {
     struct Header
     {
-        std::uint16_t stock_locate;
-        std::uint16_t tracking_number;
-        std::uint64_t timestamp;
+        std::uint16_t stock_locate{};
+        std::uint16_t tracking_number{};
+        std::uint64_t timestamp{};
 
         bool operator==(const Header& header) const = default;
     };

@@ -42,10 +42,10 @@ namespace itch::msg
 
     struct OperationalHaltMsg
     {
-        Header header;
+        Header header{};
         Alpha<8> stock;
-        MarketCode market_code;
-        OperationalHaltAction action;
+        MarketCode market_code{};
+        OperationalHaltAction action{};
 
         bool operator==(const OperationalHaltMsg& msg) const = default;
 

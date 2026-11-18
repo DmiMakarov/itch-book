@@ -15,8 +15,8 @@ namespace itch::msg
     // Отмена ранее опубликованной сделки (E, C или P) с этим match_number. Стакан не меняет
     struct BrokenTradeMsg
     {
-        Header header;
-        std::uint64_t match_number;
+        Header header{};
+        std::uint64_t match_number{};
 
         bool operator==(const BrokenTradeMsg& msg) const = default;
 

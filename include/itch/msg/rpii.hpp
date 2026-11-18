@@ -31,9 +31,9 @@ namespace itch::msg
 
     struct RpiiMsg
     {
-        Header header;
+        Header header{};
         Alpha<8> stock;
-        InterestFlag interest_flag;
+        InterestFlag interest_flag{};
 
         bool operator==(const RpiiMsg& msg) const = default;
 

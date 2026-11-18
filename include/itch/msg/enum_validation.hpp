@@ -33,7 +33,7 @@ namespace itch::msg
     {
         static_assert(Offset < N);
 
-        std::uint8_t code_ = std::to_integer<std::uint8_t>(bytes[Offset]);
+        auto code_ = std::to_integer<std::uint8_t>(bytes[Offset]);
 
         if(!valid_table[code_])
         {

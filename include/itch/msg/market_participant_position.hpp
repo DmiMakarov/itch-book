@@ -53,12 +53,12 @@ namespace itch::msg
 
     struct MarketParticipantPositionMsg
     {
-        Header header;
+        Header header{};
         Alpha<4> mpid;
         Alpha<8> stock;   // здесь после MPID, а не сразу после заголовка
-        YesNo primary_market_maker;
-        MarketMakerMode market_maker_mode;
-        MarketParticipantState market_participant_state;
+        YesNo primary_market_maker{};
+        MarketMakerMode market_maker_mode{};
+        MarketParticipantState market_participant_state{};
 
         bool operator==(const MarketParticipantPositionMsg& msg) const = default;
 

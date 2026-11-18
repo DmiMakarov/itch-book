@@ -43,9 +43,9 @@ namespace itch::msg
 
     struct StockTradingActionMsg
     {
-        Header header;
+        Header header{};
         Alpha<8> stock;
-        TradingState trading_state;
+        TradingState trading_state{};
         // Байт 20 — Reserved: не хранится и не проверяется, спецификация не задаёт его значений
         Alpha<4> reason;
 

@@ -18,12 +18,12 @@ namespace itch::msg
 {
     struct CrossTradeMsg
     {
-        Header header;
-        std::uint64_t shares;   // 8 байт, не 4
+        Header header{};
+        std::uint64_t shares{};   // 8 байт, не 4
         Alpha<8> stock;
         Price<4> cross_price;
-        std::uint64_t match_number;
-        CrossType cross_type;   // без ExtendedTradingClose — это значение только у NOII
+        std::uint64_t match_number{};
+        CrossType cross_type{};   // без ExtendedTradingClose — это значение только у NOII
 
         bool operator==(const CrossTradeMsg& msg) const = default;
 

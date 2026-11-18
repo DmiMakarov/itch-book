@@ -76,16 +76,16 @@ namespace itch::msg
 
     struct NoiiMsg
     {
-        Header header;
-        std::uint64_t paired_shares;
-        std::uint64_t imbalance_shares;
-        ImbalanceDirection imbalance_direction;
+        Header header{};
+        std::uint64_t paired_shares{};
+        std::uint64_t imbalance_shares{};
+        ImbalanceDirection imbalance_direction{};
         Alpha<8> stock;
         Price<4> far_price;
         Price<4> near_price;
         Price<4> current_reference_price;
-        CrossType cross_type;
-        PriceVariation price_variation;
+        CrossType cross_type{};
+        PriceVariation price_variation{};
 
         bool operator==(const NoiiMsg& msg) const = default;
 

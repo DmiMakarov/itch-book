@@ -29,9 +29,9 @@ namespace itch::msg
 
     struct RegShoMsg
     {
-        Header header;
+        Header header{};
         Alpha<8> stock;
-        RegShoAction action;
+        RegShoAction action{};
 
         bool operator==(const RegShoMsg& msg) const = default;
 

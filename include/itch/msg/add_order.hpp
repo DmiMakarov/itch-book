@@ -18,10 +18,10 @@ namespace itch::msg
 {
     struct AddOrderMsg
     {
-        Header header;
-        std::uint64_t order_ref;
-        BuySellIndicator side;
-        std::uint32_t shares;
+        Header header{};
+        std::uint64_t order_ref{};
+        BuySellIndicator side{};
+        std::uint32_t shares{};
         Alpha<8> stock;
         Price<4> price;       
         
@@ -35,7 +35,7 @@ namespace itch::msg
     {
         Header header = read_header(bytes);
         std::uint64_t order_ref = itch::endian::be64(bytes.subspan<11, 8>());
-        BuySellIndicator side = read_enum<BuySellIndicator, 19>(bytes, valid_buy_sell_indicators);
+        auto side = read_enum<BuySellIndicator, 19>(bytes, valid_buy_sell_indicators);
         std::uint32_t shares = itch::endian::be32(bytes.subspan<20, 4>());
         Alpha<8> stock{bytes.subspan<24, 8>()};
         Price<4> price{itch::endian::be32(bytes.subspan<32, 4>())};

@@ -17,11 +17,11 @@ namespace itch::msg
 {
     struct OrderExecutedWithPriceMsg
     {
-        Header header;
-        std::uint64_t order_ref;
-        std::uint32_t executed_shares;
-        std::uint64_t match_number;
-        YesNo printable;            // 'N' — не учитывать в объёме и ленте сделок
+        Header header{};
+        std::uint64_t order_ref{};
+        std::uint32_t executed_shares{};
+        std::uint64_t match_number{};
+        YesNo printable{};            // 'N' — не учитывать в объёме и ленте сделок
         Price<4> execution_price;   // может отличаться от цены заявки
 
         bool operator==(const OrderExecutedWithPriceMsg& msg) const = default;

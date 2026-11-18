@@ -28,8 +28,8 @@ namespace itch::msg
 
     struct MwcbStatusMsg
     {
-        Header header;
-        BreachedLevel breached_level;
+        Header header{};
+        BreachedLevel breached_level{};
 
         bool operator==(const MwcbStatusMsg& msg) const = default;
 

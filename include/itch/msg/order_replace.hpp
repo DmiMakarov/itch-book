@@ -17,10 +17,10 @@ namespace itch::msg
     // Сторона, тикер и MPID в сообщении отсутствуют — берутся из исходной заявки.
     struct OrderReplaceMsg
     {
-        Header header;
-        std::uint64_t original_order_ref;
-        std::uint64_t new_order_ref;
-        std::uint32_t shares;
+        Header header{};
+        std::uint64_t original_order_ref{};
+        std::uint64_t new_order_ref{};
+        std::uint32_t shares{};
         Price<4> price;
 
         bool operator==(const OrderReplaceMsg& msg) const = default;

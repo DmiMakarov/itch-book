@@ -161,21 +161,21 @@ namespace itch::msg
 
     struct StockDirectoryMsg
     {
-        Header header;
+        Header header{};
         Alpha<8> stock;
-        MarketCategory market_category;
-        FinancialStatus financial_status;
-        std::uint32_t round_lot_size;
-        YesNo round_lots_only;
-        IssueClassification issue_classification;
+        MarketCategory market_category{};
+        FinancialStatus financial_status{};
+        std::uint32_t round_lot_size{};
+        YesNo round_lots_only{};
+        IssueClassification issue_classification{};
         Alpha<2> issue_sub_type;
-        Authenticity authenticity;
-        YesNo short_sale_threshold;
-        YesNo ipo_flag;
-        LuldReferencePriceTier luld_reference_price_tier;
-        YesNo etp_flag;
-        std::uint32_t etp_leverage_factor;
-        YesNo inverse_indicator;
+        Authenticity authenticity{};
+        YesNo short_sale_threshold{};
+        YesNo ipo_flag{};
+        LuldReferencePriceTier luld_reference_price_tier{};
+        YesNo etp_flag{};
+        std::uint32_t etp_leverage_factor{};
+        YesNo inverse_indicator{};
 
         bool operator==(const StockDirectoryMsg& msg) const = default;
 

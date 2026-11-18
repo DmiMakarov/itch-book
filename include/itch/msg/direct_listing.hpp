@@ -19,13 +19,13 @@ namespace itch::msg
     // Direct Listing with Capital Raise Price Discovery. Добавлен в 2023 году, в файле 2019 года не встречается
     struct DirectListingMsg
     {
-        Header header;
+        Header header{};
         Alpha<8> stock;
-        YesNo open_eligible;
+        YesNo open_eligible{};
         Price<4> min_allowable_price;
         Price<4> max_allowable_price;
         Price<4> near_execution_price;
-        std::uint64_t near_execution_time;   // наносекунды от полуночи, 8 байт
+        std::uint64_t near_execution_time{};   // наносекунды от полуночи, 8 байт
         Price<4> lower_price_range_collar;
         Price<4> upper_price_range_collar;
 
