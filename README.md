@@ -17,9 +17,9 @@ AMD Ryzen 5 7500F, GCC 13.3, `-O2`:
 
 | Mode | ns / message | M messages / s | IPC |
 |---|---:|---:|---:|
-| Framing only (`ItchReader::next()`) | 3.7 | 270 | 4.05 |
-| Dispatch, one type decoded | 5.6 | 178 | 4.01 |
-| Dispatch, all 23 types decoded and validated | 11.0 | 91 | 3.00 |
+| Framing only (`ItchReader::next()`) | 3.5 | 289 | 4.28 |
+| Dispatch, one type decoded | 5.3 | 189 | 3.79 |
+| Dispatch, all 23 types decoded and validated | 10.7 | 94 | 2.86 |
 
 Baseline before optimizations: 4.2 / 5.8 / 12.2 ns.
 

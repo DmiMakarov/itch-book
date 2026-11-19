@@ -9,8 +9,6 @@ Rule: one change — one run against the baseline. If the improvement is smaller
 
 **Commit:** `e27f636`
 
-**Raw logs:** `docs/bench/` (`bench_tmp.log` — all benchmarks ×20, `perf_stat.log`, `perf_record.log`, `perf_report.log`)
-
 ### Environment
 
 | | |
@@ -137,9 +135,6 @@ $PERF report --stdio --no-children
 
 **Commit:** `3de7404` (against baseline `6751b69`, same code as `e27f636` plus docs)
 
-**Raw logs:** `docs/bench/iter1/` (`bench_all.log` — every benchmark ×20, `ab_dispatch.log` — A/B runs,
-`perf_stat.log`, `perf_stat_diff.log` — fixed-iteration counters)
-
 ### Change
 
 GCC fuses the byte-by-byte `be16` / `be32` / `be64` into one load plus a byte swap, but there is no 6-byte load,
@@ -184,7 +179,67 @@ Branch misses are unchanged (0.37 per message in All). Microbenchmark: `be48` 1.
 
 ### Next
 
-- Read the timestamp in `next()` with a single `be64` over the tracking number + timestamp, masked to 48 bits.
+- Read the timestamp in `next()` with a single `be64` over the tracking number + timestamp, masked to 48 bits —
+  done in [iteration 2](#iteration-2--timestamp-via-one-be64--2026-11-19).
+
+---
+
+## Iteration 2 — timestamp via one `be64` — 2026-11-19
+
+**Commit:** `e540d44` (against iteration 1, `3de7404`)
+
+### Change
+
+There is no 6-byte load, but the timestamp is always preceded by the 2-byte tracking number inside the same
+message header. So the 8 bytes at message offset 3 (tracking number + timestamp) are read with one `be64`, and the
+timestamp is the low 48 bits:
+
+```cpp
+// next()
+const std::uint64_t timestamp = be64(bytes.subspan(offset + 2 + 3).first<8>()) & 0xFFFF'FFFF'FFFF;
+
+// read_header(): the same load also yields the tracking number
+const std::uint64_t common_number = be64(bytes.subspan(3).first<8>());
+const std::uint16_t tracking_number = static_cast<std::uint16_t>(common_number >> 48);
+const std::uint64_t timestamp = common_number & 0xFFFF'FFFF'FFFF;
+```
+
+The two places were measured separately and together: (1) `read_header` only, (2) `next()` only, (3) both.
+
+### Method
+
+Same as iteration 1: four builds in separate worktrees (iteration 1 and variants 1–3), exact per-message counters
+from fixed-iteration `perf stat` differences, then two interleaved A/B rounds × 20 repetitions.
+
+### Results
+
+Instructions per message (exact):
+
+| | Frame | Sys | All |
+|---|---:|---:|---:|
+| Iteration 1 (`be48`) | 78 | 104 | 157.8 |
+| 1: `read_header` only | 78 | 104 | 154.4 |
+| 2: `next()` only | 71 | 97 | 150.8 |
+| 3: both | **71** | **97** | **147.4** |
+
+Time, ns/msg, medians of two A/B rounds:
+
+| | Frame | Sys | All |
+|---|---|---|---|
+| Iteration 1 (`be48`) | 3.75–3.80 | 5.53–5.74 | 10.93–11.03 |
+| 1: `read_header` only | 3.77–4.04 | 5.48–5.65 | 11.07–11.10 |
+| 2: `next()` only | 3.43–3.74 | 5.33–5.41 | 10.94–11.74 |
+| 3: both | **3.46** | **5.25–5.33** | **10.64–10.66** |
+
+### Conclusions
+
+1. **The effects add up exactly.** `next()` runs for every message and saves 7 instructions in every mode;
+   `read_header` runs only for decoded messages and saves ~3 per decoded message, so it shows up only in All.
+2. **Time follows instructions only where the code is instruction-bound.** Frame: −8 % (3.78 → 3.46 ns), consistent
+   across rounds and confirmed by −5 % cycles. Sys: ~−5 %, borderline. All: −3 %, within noise — at IPC ≈ 3 it is
+   limited by `switch` mispredictions and dependency chains, so ten fewer instructions are almost free.
+3. **Variant 3 is kept.** The gain is small but the code is no more complex, and the instruction reduction is exact.
+   `be48` stays in `endian.hpp` (tested and benchmarked) but is no longer used on the hot path.
 
 ---
 
