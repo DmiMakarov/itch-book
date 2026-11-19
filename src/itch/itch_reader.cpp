@@ -60,8 +60,7 @@ std::optional<itch::Message> itch::ItchReader::next()
                           offset);
     }
 
-    const std::uint64_t timestamp = itch::endian::be48(bytes.subspan(offset + 2 + 5).first<6>());
-
+    const std::uint64_t timestamp = itch::endian::be64(bytes.subspan(offset + 2 + 3).first<8>()) & 0xFFFF'FFFF'FFFF;
     if (timestamp < prev_timestamp)
     {
         throw FormatError(std::format("timestamp went backwards at offset {}: {} < previous {}", offset, timestamp,
