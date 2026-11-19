@@ -7,8 +7,8 @@
 
 namespace itch::msg
 {
-    // Флаги «да/нет» из нескольких типов сообщений.
-    // Пробел допустим не везде: у каждого поля своя таблица — с ним или без него.
+    // Yes/no flags used by several message types.
+    // A space is not valid everywhere: each field has its own table, with or without it.
     enum class YesNo: char
     {
         Yes = 'Y',

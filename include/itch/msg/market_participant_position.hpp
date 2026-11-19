@@ -55,7 +55,7 @@ namespace itch::msg
     {
         Header header{};
         Alpha<4> mpid;
-        Alpha<8> stock;   // здесь после MPID, а не сразу после заголовка
+        Alpha<8> stock;   // here it follows MPID, not the header
         YesNo primary_market_maker{};
         MarketMakerMode market_maker_mode{};
         MarketParticipantState market_participant_state{};

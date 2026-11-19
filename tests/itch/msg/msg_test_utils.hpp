@@ -16,9 +16,9 @@
 
 namespace itch::test
 {
-    // Сообщение из байтов, записанных вручную: make_bytes({0x53, 0x01, ...}).
-    // Размер выводится из списка, поэтому результат подходит и для span фиксированного размера.
-    // C-массив в параметре нужен намеренно: только так N выводится из списка {...}
+    // Message from hand-written bytes: make_bytes({0x53, 0x01, ...}).
+    // The size is deduced from the list, so the result also fits a fixed-extent span.
+    // The C-array parameter is intentional: it's the only way to deduce N from a {...} list
     template <std::size_t N>
     constexpr std::array<std::byte, N> make_bytes(const std::uint8_t (&values)[N]) noexcept // NOLINT(modernize-avoid-c-arrays)
     {
@@ -30,13 +30,13 @@ namespace itch::test
         return out;
     }
 
-    // Собирает сообщение по смещениям из спецификации. Смещения в тестах — литералы из
-    // docs/itch50_messages.md, а не константы из кода разбора: ошибка в разборе не повторится в тесте.
+    // Builds a message using offsets from the spec. Offsets in tests are literals from
+    // docs/itch50_messages.md, not constants from the parser, so a parser bug won't be replicated in the test.
     template <std::size_t N>
     class MsgBuilder
     {
     public:
-        // Заголовок по умолчанию: все байты разные (locate 0x0102, tracking 0x0304, timestamp 0x05060708090A)
+        // Default header: all bytes distinct (locate 0x0102, tracking 0x0304, timestamp 0x05060708090A)
         constexpr explicit MsgBuilder(char type)
         {
             put_char(0, type);
@@ -62,7 +62,7 @@ namespace itch::test
             return *this;
         }
 
-        // Alpha: выровнено влево, дополнено пробелами
+        // Alpha: left-justified, space-padded
         constexpr MsgBuilder& put_str(std::size_t offset, std::size_t len, std::string_view s)
         {
             check(offset, len);
@@ -91,14 +91,14 @@ namespace itch::test
         std::array<std::byte, N> bytes_{};
     };
 
-    // Заголовок, который ставит MsgBuilder
+    // The header MsgBuilder writes
     inline constexpr itch::msg::Header test_header{
         .stock_locate = 0x0102,
         .tracking_number = 0x0304,
         .timestamp = 0x05060708090A,
     };
 
-    // Ожидает FormatError с позицией offset внутри сообщения
+    // Expects FormatError at position offset within the message
     template <typename Parse, std::size_t N>
     void expect_format_error_at(Parse parse, const std::array<std::byte, N>& bytes, std::size_t offset)
     {
@@ -113,9 +113,9 @@ namespace itch::test
         }
     }
 
-    // Исчерпывающая проверка однобайтового флага: перебирает все 256 значений байта по смещению offset.
-    // Значения из allowed (записаны в тесте по спецификации) должны разбираться в поле с тем же символом,
-    // все остальные — давать FormatError с этим смещением.
+    // Exhaustive check of a one-byte flag: tries all 256 byte values at offset.
+    // Values in allowed (written in the test from the spec) must parse into a field with the same character;
+    // all others must throw FormatError at that offset.
     template <typename Parse, std::size_t N, typename Get>
     void expect_flag_domain(Parse parse, const std::array<std::byte, N>& bytes, std::size_t offset,
                             std::string_view allowed, Get get)
@@ -139,7 +139,7 @@ namespace itch::test
         }
     }
 
-    // Таблица допустимых значений принимает ровно символы из allowed
+    // The valid-value table accepts exactly the characters in allowed
     inline void expect_table_domain(const std::array<bool, 256>& table, std::string_view allowed)
     {
         for (unsigned b = 0; b < 256; ++b)
@@ -150,8 +150,8 @@ namespace itch::test
     }
 }
 
-// Читаемый вывод структур в сообщениях gtest вместо дампа байтов.
-// Должны лежать в namespace структуры, чтобы их нашёл ADL.
+// Readable printing of structs in gtest messages instead of a byte dump.
+// Must live in the structs' namespace so ADL finds them.
 namespace itch::msg
 {
     inline void PrintTo(const Header& h, std::ostream* os)
@@ -159,7 +159,7 @@ namespace itch::msg
         *os << "{locate=" << h.stock_locate << ", tracking=" << h.tracking_number << ", ts=" << h.timestamp << '}';
     }
 
-    // Все флаговые enum хранят ASCII-символ из сообщения
+    // All flag enums store the ASCII character from the message
     template <Enum E>
     void PrintTo(const E& e, std::ostream* os)
     {

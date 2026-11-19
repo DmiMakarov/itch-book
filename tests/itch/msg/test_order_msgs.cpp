@@ -1,4 +1,4 @@
-// Сообщения о заявках: F, E, C, X, D, U ('A' — в test_add_order.cpp).
+// Order messages: F, E, C, X, D, U ('A' is in test_add_order.cpp).
 #include <gtest/gtest.h>
 
 #include "msg_samples.hpp"
@@ -34,7 +34,7 @@ TEST(MsgAddOrderMpidTest, FlagDomainsMatchSpec)
 
 TEST(MsgAddOrderMpidTest, SharesFirst36BytesWithAddOrder)
 {
-    // Те же 36 байт с типом 'A' дают те же поля
+    // The same 36 bytes with type 'A' yield the same fields
     auto f = add_order_mpid_bytes();
     std::array<std::byte, 36> a{};
     std::copy_n(f.begin(), 36, a.begin());
@@ -94,7 +94,7 @@ TEST(MsgOrderReplaceTest, DecodesAllFields)
 
 TEST(MsgOrderReplaceTest, RealisticReplace)
 {
-    // Заявка 1000 заменена на 1001: 300 акций по 157.70
+    // Order 1000 replaced by 1001: 300 shares at 157.70
     const auto bytes = MsgBuilder<35>{'U'}.put_uint(11, 8, 1000).put_uint(19, 8, 1001).put_uint(27, 4, 300).put_uint(31, 4, 1'577'000).bytes();
     const auto m = read_order_replace_msg(bytes);
     EXPECT_EQ(m.original_order_ref, 1000u);

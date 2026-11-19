@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <exception>
 #include <span>
 #include <string>
@@ -37,10 +38,17 @@ std::vector<std::byte> load_prefix(const std::string& path, std::size_t limit)
     return {prefix.begin(), prefix.end()};
 }
 
+// Path to the ITCH file: $ITCH_FILE, or data/12302019.NASDAQ_ITCH50 relative to the working directory
+std::string sample_path()
+{
+    const char* env = std::getenv("ITCH_FILE");
+    return env != nullptr ? std::string{env} : std::string{"data/12302019.NASDAQ_ITCH50"};
+}
+
+// First 256 MiB of the file, cut at a record boundary; loaded once, outside the timed region
 const std::vector<std::byte>& sample()
 {
-    static const std::vector<std::byte> data = load_prefix("/home/lama/itch-book/data/12302019.NASDAQ_ITCH50",
-                                                           std::size_t{1} << 28);
+    static const std::vector<std::byte> data = load_prefix(sample_path(), std::size_t{1} << 28);
     return data;
 }
 }
@@ -54,7 +62,7 @@ void BM_DispatchAll(benchmark::State& state)
     std::uint64_t total = 0;
     for (auto _ : state)
     {
-        itch::ItchReader reader{*buf};           // новый reader на каждую итерацию
+        itch::ItchReader reader{*buf};           // fresh reader for every iteration
         itch::handler::AllHandler handler{};
         const auto counts = itch::handler::consume(reader, [&handler](const itch::Message& msg) { itch::dispatch(msg, handler); });
         benchmark::DoNotOptimize(handler.checksum);
@@ -74,7 +82,7 @@ void BM_DispatchFrame(benchmark::State& state)
     std::uint64_t total = 0;
     for (auto _ : state)
     {
-        itch::ItchReader reader{*buf};           // новый reader на каждую итерацию
+        itch::ItchReader reader{*buf};           // fresh reader for every iteration
         std::uint64_t checksum = 0;
         const auto counts = itch::handler::consume(reader, [&checksum](const itch::Message& msg) { checksum ^= msg.timestamp; });
         benchmark::DoNotOptimize(checksum);
@@ -93,7 +101,7 @@ void BM_DispatchSys(benchmark::State& state)
     std::uint64_t total = 0;
     for (auto _ : state)
     {
-        itch::ItchReader reader{*buf};           // новый reader на каждую итерацию
+        itch::ItchReader reader{*buf};           // fresh reader for every iteration
         itch::handler::SysEventHandler handler{};
         const auto counts = itch::handler::consume(reader, [&handler](const itch::Message& msg) { itch::dispatch(msg, handler); });
         benchmark::DoNotOptimize(handler.total_count);

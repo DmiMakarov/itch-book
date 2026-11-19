@@ -12,7 +12,7 @@
 
 namespace itch::msg
 {
-    // Заявка удаляется из стакана целиком
+    // The order is removed from the book entirely
     struct OrderDeleteMsg
     {
         Header header{};

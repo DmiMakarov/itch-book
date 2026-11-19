@@ -12,7 +12,7 @@
 
 namespace itch::msg
 {
-    // Отмена ранее опубликованной сделки (E, C или P) с этим match_number. Стакан не меняет
+    // Cancels a previously published trade (E, C or P) with this match_number. Does not change the book
     struct BrokenTradeMsg
     {
         Header header{};

@@ -21,8 +21,8 @@ namespace itch::msg
         std::uint64_t order_ref{};
         std::uint32_t executed_shares{};
         std::uint64_t match_number{};
-        YesNo printable{};            // 'N' — не учитывать в объёме и ленте сделок
-        Price<4> execution_price;   // может отличаться от цены заявки
+        YesNo printable{};            // 'N': exclude from volume and the time-and-sales tape
+        Price<4> execution_price;   // may differ from the order price
 
         bool operator==(const OrderExecutedWithPriceMsg& msg) const = default;
 

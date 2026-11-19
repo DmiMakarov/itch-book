@@ -13,8 +13,8 @@
 
 namespace itch::msg
 {
-    // Старая заявка удаляется, новая добавляется с новыми ценой и объёмом.
-    // Сторона, тикер и MPID в сообщении отсутствуют — берутся из исходной заявки.
+    // The old order is removed and a new one is added with the new price and shares.
+    // Side, stock and MPID are not in the message; they are taken from the original order.
     struct OrderReplaceMsg
     {
         Header header{};

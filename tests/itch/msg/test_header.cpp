@@ -13,10 +13,10 @@ using itch::test::make_bytes;
 
 namespace
 {
-    // [тип][locate 2][tracking 2][timestamp 6] — все байты разные,
-    // так что перепутанные поля или сдвинутое смещение сразу дают другое число.
+    // [type][locate 2][tracking 2][timestamp 6]: all bytes distinct,
+    // so swapped fields or a shifted offset immediately yield a different number.
     constexpr auto distinct = make_bytes({
-        0x53,                               // тип 'S' — read_header его не читает
+        0x53,                               // type 'S': read_header doesn't read it
         0x01, 0x02,                         // stock locate
         0x03, 0x04,                         // tracking number
         0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, // timestamp
@@ -28,7 +28,7 @@ namespace
         .timestamp = 0x05060708090A,
     };
 
-    // Ошибка в смещениях ломает сборку, а не только прогон тестов
+    // An offset bug breaks the build, not just the test run
     static_assert(read_header(distinct) == distinct_expected);
 }
 
@@ -39,7 +39,7 @@ TEST(MsgHeaderTest, DecodesDistinctFields)
 
 TEST(MsgHeaderTest, DecodesMaxValues)
 {
-    // 0xFF во всех байтах: ловит расширение знака и потерю старших байтов
+    // 0xFF in every byte: catches sign extension and lost high bytes
     constexpr auto bytes = make_bytes({
         0x53,
         0xFF, 0xFF,
@@ -57,7 +57,7 @@ TEST(MsgHeaderTest, DecodesMaxValues)
 
 TEST(MsgHeaderTest, DecodesRealisticTimestampAbove32Bits)
 {
-    // 09:30:00 = 34 200 с от полуночи = 34 200 000 000 000 нс = 0x1F1ACED9F000
+    // 09:30:00 = 34,200 s since midnight = 34,200,000,000,000 ns = 0x1F1ACED9F000
     constexpr auto bytes = make_bytes({
         0x41,
         0x00, 0x07,
@@ -75,7 +75,7 @@ TEST(MsgHeaderTest, DecodesRealisticTimestampAbove32Bits)
 
 TEST(MsgHeaderTest, IgnoresTypeByteAndTail)
 {
-    // Сообщение длиной 36 байт (как 'A'): заголовок тот же, хвост — мусор
+    // A 36-byte message (like 'A'): same header, garbage tail
     std::array<std::byte, 36> bytes{};
     bytes.fill(std::byte{0xEE});
     std::copy(distinct.begin(), distinct.end(), bytes.begin());

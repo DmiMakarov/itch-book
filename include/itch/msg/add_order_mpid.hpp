@@ -14,8 +14,8 @@
 
 namespace itch::msg
 {
-    // Поля плоские, а не AddOrderMsg внутри: так у 'F' есть msg.header, как у всех остальных типов,
-    // и обработчик с on(const auto& m) { m.header... } работает без особых случаев
+    // Fields are flat rather than wrapping an AddOrderMsg: this way 'F' has msg.header like every other type,
+    // and a handler with on(const auto& m) { m.header... } works without special cases
     struct AddOrderMpidMsg
     {
         Header header{};
@@ -36,7 +36,7 @@ namespace itch::msg
 
     [[nodiscard]] constexpr AddOrderMpidMsg read_add_order_mpid_msg(const std::span<const std::byte, AddOrderMpidMsg::length> bytes)
     {
-        // Первые 36 байт совпадают с 'A': разбираются тем же кодом
+        // The first 36 bytes match 'A' and are parsed by the same code
         const AddOrderMsg base = read_add_order_msg(bytes.first<AddOrderMsg::length>());
 
         return AddOrderMpidMsg{

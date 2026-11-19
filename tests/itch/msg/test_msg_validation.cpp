@@ -17,7 +17,7 @@ namespace
 {
     constexpr std::array allowed_codes{Alpha<2>{"AB"}, Alpha<2>{"C"}, Alpha<2>{}};
 
-    // [мусор][код 2 байта][мусор]
+    // [garbage][2-byte code][garbage]
     constexpr std::array<std::byte, 4> code_bytes(char first, char second)
     {
         return make_bytes({0xEE, static_cast<std::uint8_t>(first), static_cast<std::uint8_t>(second), 0xEE});
@@ -35,14 +35,14 @@ TEST(MsgAlphaCodeTest, AcceptsListedCodes)
 {
     EXPECT_EQ(read_code(code_bytes('A', 'B')).view(), "AB");
     EXPECT_EQ(read_code(code_bytes('C', ' ')).view(), "C");
-    EXPECT_TRUE(read_code(code_bytes(' ', ' ')).empty()); // пустой код допустим, только если он в списке
+    EXPECT_TRUE(read_code(code_bytes(' ', ' ')).empty()); // an empty code is valid only if it's in the list
 }
 
 TEST(MsgAlphaCodeTest, RejectsUnlistedCodesWithFieldOffset)
 {
     itch::test::expect_format_error_at(read_code, code_bytes('A', 'C'), 1);
-    itch::test::expect_format_error_at(read_code, code_bytes('a', 'b'), 1); // регистр
-    itch::test::expect_format_error_at(read_code, code_bytes(' ', 'C'), 1); // ведущий пробел — другой код
+    itch::test::expect_format_error_at(read_code, code_bytes('a', 'b'), 1); // case
+    itch::test::expect_format_error_at(read_code, code_bytes(' ', 'C'), 1); // a leading space makes a different code
     itch::test::expect_format_error_at(read_code, code_bytes('C', 'C'), 1);
 }
 
@@ -54,7 +54,7 @@ TEST(MsgSharedEnumsTest, YesNoTablesMatchSpec)
 
 TEST(MsgSharedEnumsTest, CrossTypeTablesMatchSpec)
 {
-    // Cross Trade: O, C, H. NOII: ещё A (Extended Trading Close)
+    // Cross Trade: O, C, H. NOII: also A (Extended Trading Close)
     itch::test::expect_table_domain(itch::msg::valid_cross_trade_cross_type, "OCH");
     itch::test::expect_table_domain(itch::msg::valid_noii_cross_type, "OCHA");
 }

@@ -48,8 +48,8 @@ namespace itch
     {
         try
         {
-            // Без default: -Wswitch (в -Wall) с -Werror не даст собрать код, если какой-то MsgType не разобран.
-            // Неизвестный байт типа сюда не дойдёт — reader бросает FormatError раньше.
+            // No default: -Wswitch (part of -Wall) with -Werror fails the build if any MsgType is not handled.
+            // An unknown type byte never gets here: the reader throws FormatError earlier.
             switch(msg.type)
             {
                 case MsgType::SystemEvent:

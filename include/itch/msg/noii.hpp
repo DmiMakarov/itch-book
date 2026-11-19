@@ -23,7 +23,7 @@ namespace itch::msg
         Sell = 'S',
         NoImbalance = 'N',
         InsufficientOrders = 'O',
-        Paused = 'P'   // с 2023 года
+        Paused = 'P'   // since 2023
     };
 
     inline constexpr std::array imbalance_directions{
@@ -36,7 +36,7 @@ namespace itch::msg
 
     inline constexpr std::array<bool, 256> valid_imbalance_direction = make_valid_table(imbalance_directions);
 
-    // Отклонение Near Price от Current Reference Price, по модулю
+    // Absolute deviation of Near Price from Current Reference Price
     enum class PriceVariation: char
     {
         LessThan1Pct = 'L',

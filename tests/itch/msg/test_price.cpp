@@ -4,7 +4,7 @@
 #include <type_traits>
 
 #include "itch/msg/price.hpp"
-// PrintTo для Price: gtest находит его через ADL, поэтому clangd не видит использования
+// PrintTo for Price: gtest finds it via ADL, so clangd doesn't see it being used
 #include "msg_test_utils.hpp" // IWYU pragma: keep
 
 using itch::msg::Price;
@@ -37,7 +37,7 @@ TEST(MsgPriceTest, Price8HasEightDecimals)
 
 TEST(MsgPriceTest, MaxPrice4DoesNotOverflow)
 {
-    // Максимум Price(4) по спецификации — 200 000.0000 = 2 000 000 000
+    // Spec maximum for Price(4) is 200,000.0000 = 2,000,000,000
     const Price<4> p{2'000'000'000};
     EXPECT_EQ(p.raw(), 2'000'000'000u);
     EXPECT_DOUBLE_EQ(p.to_double(), 200'000.0);

@@ -1,6 +1,6 @@
 ---
-# Наследует корневой .clang-tidy. ASSERT_TRUE(opt.has_value()) прерывает тест,
-# но проверка этого не понимает и даёт ложные срабатывания на каждом доступе к optional.
+# Inherits the root .clang-tidy. ASSERT_TRUE(opt.has_value()) aborts the test,
+# but the check doesn't understand that and reports false positives on every optional access.
 InheritParentConfig: true
 Checks: >
   -bugprone-unchecked-optional-access

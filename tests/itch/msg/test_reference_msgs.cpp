@@ -1,6 +1,6 @@
-// Справочные и административные сообщения: R, H, Y, L, V, W, K, J, h.
-// На каждый тип: разбор образца целиком (в том числе при компиляции) и исчерпывающая проверка
-// каждого флага по списку значений из спецификации.
+// Reference and administrative messages: R, H, Y, L, V, W, K, J, h.
+// For each type: a full parse of the sample (including at compile time) and an exhaustive check
+// of every flag against the list of values from the spec.
 #include <gtest/gtest.h>
 
 #include <string_view>
@@ -26,7 +26,7 @@ namespace
     static_assert(read_luld_auction_collar_msg(luld_auction_collar_bytes()) == luld_auction_collar_expected());
     static_assert(read_operational_halt_msg(operational_halt_bytes()) == operational_halt_expected());
 
-    // Проверка многосимвольного кода: каждый код из списка спецификации принимается, остальные — FormatError
+    // Multi-character code check: every code from the spec list is accepted, everything else is FormatError
     template <std::size_t N, typename Parse, typename Get>
     void expect_alpha_codes(Parse parse, std::array<std::byte, N> bytes, std::size_t offset, std::size_t len,
                             std::initializer_list<std::string_view> valid, std::initializer_list<std::string_view> invalid,
@@ -79,7 +79,7 @@ TEST(MsgStockDirectoryTest, FlagDomainsMatchSpec)
 
 TEST(MsgStockDirectoryTest, IssueSubTypeCodesMatchSpec)
 {
-    // Приложение E — все 58 кодов
+    // Appendix E: all 58 codes
     expect_alpha_codes(read_stock_directory_msg, stock_directory_bytes(), 27, 2,
                        {"A", "AI", "B", "C", "CB", "CF", "CL", "CM", "CO", "CT", "CU", "CW", "D", "E", "EG", "EI",
                         "EM", "EN", "EU", "F", "FI", "FL", "G", "I", "IR", "IW", "IX", "J", "L", "LL", "M", "MF",
@@ -91,7 +91,7 @@ TEST(MsgStockDirectoryTest, IssueSubTypeCodesMatchSpec)
 
 TEST(MsgStockDirectoryTest, RealisticEtp)
 {
-    // SPY: NYSE Arca, ETF (sub-type "I"), лот 100, tier 1
+    // SPY: NYSE Arca, ETF (sub-type "I"), round lot 100, tier 1
     const auto bytes = MsgBuilder<39>{'R'}
                            .put_str(11, 8, "SPY")
                            .put_char(19, 'P')
@@ -141,7 +141,7 @@ TEST(MsgStockTradingActionTest, ReservedByteIsIgnored)
 
 TEST(MsgStockTradingActionTest, ReasonCodesMatchSpec)
 {
-    // Приложение C; "" — четыре пробела, причина не указана
+    // Appendix C; "" is four spaces: reason not specified
     expect_alpha_codes(read_stock_trading_action_msg, stock_trading_action_bytes(), 21, 4,
                        {"T1", "T2", "T3", "T5", "T6", "T7", "T8", "T12", "H4", "H9", "H10", "H11", "O1", "LUDP",
                         "LUDS", "MWC0", "MWC1", "MWC2", "MWC3", "MWCQ", "IPO1", "IPOQ", "IPOE", "M1", "M2", "R1",
@@ -189,7 +189,7 @@ TEST(MsgMwcbDeclineLevelTest, DecodesAllFields)
 
 TEST(MsgMwcbDeclineLevelTest, LevelsArePrice8)
 {
-    // 2 830,00 пунктов S&P 500 с 8 знаками после запятой
+    // 2,830.00 S&P 500 points with 8 decimal places
     const auto bytes = MsgBuilder<35>{'V'}
                            .put_uint(11, 8, 283'000'000'000)
                            .put_uint(19, 8, 263'000'000'000)

@@ -16,8 +16,8 @@ namespace itch
 struct Message
 {
     MsgType type;
-    std::span<const std::byte> bytes; // всё сообщение от байта типа, без 2-байтового префикса длины
-    std::size_t offset;               // где в буфере начинается запись (её префикс длины)
+    std::span<const std::byte> bytes; // the whole message from the type byte, without the 2-byte length prefix
+    std::size_t offset;               // where the record starts in the buffer (at its length prefix)
     std::uint64_t timestamp;
 };
 
@@ -30,10 +30,10 @@ class ItchReader
 public:
     explicit ItchReader(std::span<const std::byte> bytes_, std::size_t offset_ = 0);
 
-    // Возвращает следующее сообщение: тип известен, длина совпадает с msg_lengths,
-    // timestamp не меньше предыдущего.
-    // std::nullopt — буфер закончился ровно на границе записи.
-    // Любое нарушение формата — FormatError со смещением записи.
+    // Returns the next message: the type is known, the length matches msg_lengths,
+    // and the timestamp is not less than the previous one.
+    // std::nullopt: the buffer ended exactly on a record boundary.
+    // Any format violation throws FormatError with the record offset.
     [[nodiscard]] std::optional<Message> next();
 };
 

@@ -30,7 +30,7 @@ namespace itch::msg
 
     inline constexpr std::array<bool, 256> valid_trading_state = make_valid_table(trading_states);
 
-    // Приложение C спецификации. Alpha<4>{} — четыре пробела, причина не указана
+    // Spec Appendix C. Alpha<4>{} is four spaces: reason not specified
     inline constexpr std::array trading_action_reasons{
         Alpha<4>{"T1"},   Alpha<4>{"T2"},   Alpha<4>{"T3"},   Alpha<4>{"T5"},   Alpha<4>{"T6"},
         Alpha<4>{"T7"},   Alpha<4>{"T8"},   Alpha<4>{"T12"},  Alpha<4>{"H4"},   Alpha<4>{"H9"},
@@ -46,7 +46,7 @@ namespace itch::msg
         Header header{};
         Alpha<8> stock;
         TradingState trading_state{};
-        // Байт 20 — Reserved: не хранится и не проверяется, спецификация не задаёт его значений
+        // Byte 20 is Reserved: neither stored nor validated, the spec defines no values for it
         Alpha<4> reason;
 
         bool operator==(const StockTradingActionMsg& msg) const = default;

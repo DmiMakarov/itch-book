@@ -19,7 +19,7 @@ namespace fs = std::filesystem;
 
 namespace
 {
-    // Временный файл заданного размера; удаляется при завершении программы
+    // Temporary file of the given size; removed when the program exits
     class TempFile
     {
     public:
@@ -57,7 +57,7 @@ namespace
         fs::path path_;
     };
 
-    // Один файл на каждый размер, создаётся при первом запросе (вне замера)
+    // One file per size, created on first request (outside the timed region)
     const fs::path& temp_file(std::size_t size)
     {
         static std::map<std::size_t, TempFile> files;
@@ -80,7 +80,7 @@ namespace
     }
 }
 
-// open + fstat + mmap + munmap без обращения к данным: от размера файла почти не зависит
+// open + fstat + mmap + munmap without touching the data: nearly independent of file size
 static void BM_MapUnmap(benchmark::State& state)
 {
     const auto& path = temp_file(static_cast<std::size_t>(state.range(0)));
@@ -92,8 +92,8 @@ static void BM_MapUnmap(benchmark::State& state)
     }
 }
 
-// Отображение и полный проход на каждой итерации: включает page fault'ы на каждую страницу
-// (данные уже в page cache, так что это тёплый прогон)
+// Map and full pass on every iteration: includes a page fault for every page
+// (the data is already in the page cache, so this is a warm run)
 template <itch::AccessPattern Pattern>
 static void BM_MapAndScan(benchmark::State& state)
 {
@@ -107,12 +107,12 @@ static void BM_MapAndScan(benchmark::State& state)
     state.SetBytesProcessed(state.iterations() * state.range(0));
 }
 
-// Повторный проход по уже отображённым страницам: page fault'ов нет, остаётся пропускная способность памяти
+// Repeated pass over already-mapped pages: no page faults, only memory bandwidth remains
 static void BM_ScanMapped(benchmark::State& state)
 {
     itch::MappedFile file{temp_file(static_cast<std::size_t>(state.range(0)))};
     const auto bytes = file.bytes();
-    benchmark::DoNotOptimize(sum_bytes(bytes)); // прогрев: все страницы уже отображены
+    benchmark::DoNotOptimize(sum_bytes(bytes)); // warm-up: all pages are now mapped
 
     for (auto _ : state)
     {

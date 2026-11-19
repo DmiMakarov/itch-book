@@ -16,12 +16,12 @@ using itch::test::make_bytes;
 
 namespace
 {
-    // System Event: заголовок с разными байтами + Event Code на offset 11
+    // System Event: header with distinct bytes + Event Code at offset 11
     constexpr std::array<std::byte, 12> sys_event_bytes(std::uint8_t code)
     {
         return make_bytes({
             0x53,
-            0x00, 0x00,                         // locate = 0 у системных сообщений
+            0x00, 0x00,                         // locate = 0 for system messages
             0x01, 0x02,                         // tracking number
             0x03, 0x04, 0x05, 0x06, 0x07, 0x08, // timestamp
             code,
@@ -57,7 +57,7 @@ TEST(MsgSysEventTest, DecodesEveryValidCode)
 
 TEST(MsgSysEventTest, SpecCodesMatchEnum)
 {
-    // Сверка enum со спецификацией: значения записаны независимо от исходника
+    // Check the enum against the spec: values are written independently of the source
     EXPECT_EQ(static_cast<char>(EventCode::StartMsg), 'O');
     EXPECT_EQ(static_cast<char>(EventCode::StartSystemClock), 'S');
     EXPECT_EQ(static_cast<char>(EventCode::StartMarketClock), 'Q');
@@ -69,8 +69,8 @@ TEST(MsgSysEventTest, SpecCodesMatchEnum)
 
 TEST(MsgSysEventTest, RejectsInvalidCodes)
 {
-    // 'Z' — чужая буква, 'o' — регистр, 'A' — тип сообщения, а не код события,
-    // 0x00 и пробел — пустые значения, 0xFF — индекс 255 (беззнаковость и размер таблицы)
+    // 'Z' is a foreign letter, 'o' tests case, 'A' is a message type rather than an event code,
+    // 0x00 and space are empty values, 0xFF is index 255 (unsignedness and table size)
     constexpr std::array<std::uint8_t, 6> invalid{'Z', 'o', 'A', 0x00, ' ', 0xFF};
 
     for (const auto code : invalid)
@@ -83,8 +83,8 @@ TEST(MsgSysEventTest, RejectsInvalidCodes)
         }
         catch (const itch::FormatError& e)
         {
-            // Сейчас offset — позиция байта внутри сообщения, а не записи в файле.
-            // Если смещение записи будет подставлять диспетчер, проверка переедет к нему.
+            // Called directly, read_*_msg reports the byte position within the message.
+            // itch::dispatch replaces it with the record offset in the file (see test_dispatcher.cpp).
             EXPECT_EQ(e.offset(), 11u) << e.what();
         }
     }

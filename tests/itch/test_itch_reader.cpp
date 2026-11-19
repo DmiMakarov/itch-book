@@ -11,17 +11,17 @@
 
 namespace
 {
-    // Собирает поток записей BinaryFILE: [длина be16][тип][locate][tracking][timestamp be48][нули до длины]
+    // Builds a BinaryFILE record stream: [length be16][type][locate][tracking][timestamp be48][zeros up to length]
     class StreamBuilder
     {
     public:
-        // Запись с табличной длиной для типа
+        // Record with the table length for its type
         StreamBuilder& add(char type, std::uint64_t timestamp)
         {
             return add(type, timestamp, itch::msg_lengths[static_cast<std::uint8_t>(type)]);
         }
 
-        // Запись с произвольной длиной; тело короче 11 байт обрезается
+        // Record with an arbitrary length; a body shorter than 11 bytes is truncated
         StreamBuilder& add(char type, std::uint64_t timestamp, std::size_t length)
         {
             put_be(length, 2);
@@ -62,7 +62,7 @@ namespace
         std::vector<std::byte> bytes_;
     };
 
-    // Проверяет, что next() бросает FormatError с ожидаемым смещением
+    // Checks that next() throws FormatError with the expected offset
     void expect_format_error_at(itch::ItchReader& reader, std::size_t offset)
     {
         try
@@ -89,7 +89,7 @@ TEST(ItchReaderTest, ReadsSequenceOfMessages)
     EXPECT_EQ(s.type, itch::MsgType::SystemEvent);
     EXPECT_EQ(s.offset, 0u);
     EXPECT_EQ(s.bytes.size(), 12u);
-    EXPECT_EQ(s.bytes[0], std::byte{'S'}); // bytes начинается с байта типа
+    EXPECT_EQ(s.bytes[0], std::byte{'S'}); // bytes starts at the type byte
     EXPECT_EQ(s.timestamp, 100u);
 
     const auto a_opt = reader.next();
@@ -98,7 +98,7 @@ TEST(ItchReaderTest, ReadsSequenceOfMessages)
     EXPECT_EQ(a.type, itch::MsgType::AddOrder);
     EXPECT_EQ(a.offset, 2u + 12u);
     EXPECT_EQ(a.bytes.size(), 36u);
-    EXPECT_EQ(a.bytes.data(), stream.bytes().data() + a.offset + 2); // без копирования
+    EXPECT_EQ(a.bytes.data(), stream.bytes().data() + a.offset + 2); // zero-copy
     EXPECT_EQ(a.timestamp, 200u);
 
     const auto d_opt = reader.next();
@@ -106,10 +106,10 @@ TEST(ItchReaderTest, ReadsSequenceOfMessages)
     const itch::Message& d = d_opt.value();
     EXPECT_EQ(d.type, itch::MsgType::OrderDelete);
     EXPECT_EQ(d.offset, 2u + 12u + 2u + 36u);
-    EXPECT_EQ(d.timestamp, 200u); // равное время допустимо
+    EXPECT_EQ(d.timestamp, 200u); // equal timestamp is allowed
 
     EXPECT_FALSE(reader.next().has_value());
-    EXPECT_FALSE(reader.next().has_value()); // после конца nullopt повторяется
+    EXPECT_FALSE(reader.next().has_value()); // nullopt repeats after the end
 }
 
 TEST(ItchReaderTest, ReadsFullTimestampRange)
@@ -154,7 +154,7 @@ TEST(ItchReaderTest, StartOffsetPastEndThrows)
 TEST(ItchReaderTest, TruncatedLengthPrefixThrows)
 {
     StreamBuilder stream;
-    stream.add('S', 1).raw({0x00}); // один байт вместо двух
+    stream.add('S', 1).raw({0x00}); // one byte instead of two
     itch::ItchReader reader{stream.bytes()};
 
     ASSERT_TRUE(reader.next().has_value());
@@ -164,7 +164,7 @@ TEST(ItchReaderTest, TruncatedLengthPrefixThrows)
 TEST(ItchReaderTest, TruncatedMessageThrows)
 {
     StreamBuilder stream;
-    stream.add('S', 1).raw({0x00, 0x24, 'A', 0x00}); // заявлено 36 байт, есть 2
+    stream.add('S', 1).raw({0x00, 0x24, 'A', 0x00}); // 36 bytes declared, 2 present
     itch::ItchReader reader{stream.bytes()};
 
     ASSERT_TRUE(reader.next().has_value());
@@ -174,7 +174,7 @@ TEST(ItchReaderTest, TruncatedMessageThrows)
 TEST(ItchReaderTest, ZeroLengthThrows)
 {
     StreamBuilder stream;
-    stream.raw({0x00, 0x00}); // последние два байта буфера: байта типа нет
+    stream.raw({0x00, 0x00}); // last two bytes of the buffer: no type byte
     itch::ItchReader reader{stream.bytes()};
 
     expect_format_error_at(reader, 0);
@@ -193,7 +193,7 @@ TEST(ItchReaderTest, UnknownTypeThrows)
 TEST(ItchReaderTest, NonAsciiTypeThrows)
 {
     StreamBuilder stream;
-    stream.add(static_cast<char>(0xFF), 1, 12); // байт > 127: индекс в таблице не должен стать отрицательным
+    stream.add(static_cast<char>(0xFF), 1, 12); // byte > 127: the table index must not become negative
     itch::ItchReader reader{stream.bytes()};
 
     expect_format_error_at(reader, 0);
@@ -202,7 +202,7 @@ TEST(ItchReaderTest, NonAsciiTypeThrows)
 TEST(ItchReaderTest, LengthMismatchThrows)
 {
     StreamBuilder stream;
-    stream.add('A', 1, 12); // Add Order должен быть 36 байт
+    stream.add('A', 1, 12); // Add Order must be 36 bytes
     itch::ItchReader reader{stream.bytes()};
 
     expect_format_error_at(reader, 0);

@@ -21,9 +21,9 @@
 
 enum class HandlerType : std::uint8_t
 {
-    Frame, // только фрейминг ItchReader, без dispatch
-    All,   // dispatch с разбором всех 23 типов
-    Sys    // dispatch с разбором только System Event
+    Frame, // ItchReader framing only, no dispatch
+    All,   // dispatch parsing all 23 types
+    Sys    // dispatch parsing System Event only
 };
 
 
@@ -62,8 +62,8 @@ void print_error(std::string_view message)
               << "Try 'itch_app --help' for more information.\n";
 }
 
-// Чистый разбор: ничего не печатает, только возвращает результат.
-// argv живёт до конца программы, поэтому ключи и значения храним как string_view.
+// Pure parsing: prints nothing, only returns the result.
+// argv lives until the program exits, so keys and values are stored as string_view.
 ParseResult parse_args(int argc, char** argv)
 {
     std::unordered_map<std::string_view, std::string_view> args;
@@ -90,7 +90,7 @@ ParseResult parse_args(int argc, char** argv)
         }
     }
 
-    // --help проверяем первым: он важнее любых других ошибок
+    // --help is checked first: it takes precedence over any other error
     if (args.contains("--help"))
     {
         return HelpRequested{};
@@ -98,7 +98,7 @@ ParseResult parse_args(int argc, char** argv)
 
     Options opt;
 
-    // --file: обязателен, со значением
+    // --file: required, takes a value
     const auto file = args.find("--file");
 
     if (file == args.end() || file->second.empty())
@@ -109,7 +109,7 @@ ParseResult parse_args(int argc, char** argv)
     opt.filepath = file->second;
     args.erase(file);
 
-    // --handler: обязателен, со значением
+    // --handler: required, takes a value
     const auto handler = args.find("--handler");
 
     if (handler == args.end() || handler->second.empty())
@@ -136,7 +136,7 @@ ParseResult parse_args(int argc, char** argv)
 
     args.erase(handler);
 
-    // --sequential: флаг без значения
+    // --sequential: flag without a value
     if (const auto seq = args.find("--sequential"); seq != args.end())
     {
         if (!seq->second.empty())
@@ -148,7 +148,7 @@ ParseResult parse_args(int argc, char** argv)
         args.erase(seq);
     }
 
-    // всё, что осталось, — неизвестные опции
+    // anything left over is an unknown option
     if (!args.empty())
     {
         return ParseError{std::format("unknown option '{}'", args.begin()->first)};
@@ -157,7 +157,7 @@ ParseResult parse_args(int argc, char** argv)
     return opt;
 }
 
-// Тот же цикл consume, что и в бенчмарке; время меряем снаружи, вокруг вызова
+// Same consume loop as in the benchmark; timing is measured outside, around the call
 template <typename OnMessage>
 std::pair<itch::handler::ConsumeStats, std::chrono::nanoseconds> timed_consume(itch::ItchReader& reader, OnMessage on_message)
 {
@@ -225,7 +225,7 @@ void run_sys(itch::ItchReader& reader)
     }
 }
 
-// Вся логика программы. Исключения пробрасываются наверх, в main.
+// All program logic. Exceptions propagate up to main.
 int run(int argc, char** argv)
 {
     const ParseResult result = parse_args(argc, argv);

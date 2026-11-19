@@ -33,7 +33,7 @@ namespace itch::msg
     {
         Header header{};
         Alpha<8> stock;
-        std::uint32_t release_time_seconds{};   // секунды от полуночи, не наносекунды; 0 при отмене
+        std::uint32_t release_time_seconds{};   // seconds since midnight, not nanoseconds; 0 on cancellation
         IpoReleaseQualifier release_qualifier{};
         Price<4> ipo_price;
 

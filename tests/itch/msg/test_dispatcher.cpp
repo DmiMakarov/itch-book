@@ -33,47 +33,47 @@ namespace
             0x41, 0x00, 0x07, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC8,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2A, // order ref 42
             side,
-            0x00, 0x00, 0x00, 0x64,                         // 100 акций
+            0x00, 0x00, 0x00, 0x64,                         // 100 shares
             'A', 'A', 'P', 'L', ' ', ' ', ' ', ' ',
             0x00, 0x00, 0x27, 0x10,                         // 1.0000
         });
     }
 
-    // Message так, как его отдал бы reader: тип, байты сообщения, смещение записи, время
+    // A Message as the reader would produce it: type, message bytes, record offset, timestamp
     Message make_message(MsgType type, std::span<const std::byte> bytes, std::size_t offset)
     {
         return Message{.type = type, .bytes = bytes, .offset = offset, .timestamp = 0};
     }
 
-    // Знает только S: остальные типы диспетчер не должен даже разбирать
+    // Handles only S: the dispatcher must not even parse other types
     struct SysEventOnly
     {
         std::vector<SysEventMsg> received;
         void on(const SysEventMsg& m) { received.push_back(m); }
     };
 
-    // Знает только A
+    // Handles only A
     struct AddOrderOnly
     {
         std::vector<AddOrderMsg> received;
         void on(const AddOrderMsg& m) { received.push_back(m); }
     };
 
-    // Принимает всё через одну шаблонную перегрузку и пишет время из заголовка
+    // Accepts everything via a single template overload and records the header timestamp
     struct Everything
     {
         std::vector<std::uint64_t> timestamps;
         void on(const auto& m) { timestamps.push_back(m.header.timestamp); }
     };
 
-    // Принимает по rvalue-ссылке: проверка в диспетчере должна это допускать
+    // Takes an rvalue reference: the dispatcher's check must allow this
     struct ByRvalue
     {
         int calls = 0;
         void on(SysEventMsg&& /*m*/) { ++calls; }
     };
 
-    // Нет ни одной перегрузки on
+    // No on overloads at all
     struct Nothing
     {
     };
@@ -124,8 +124,8 @@ TEST(MsgDispatcherTest, SkipsTypesHandlerDoesNotAccept)
 
 TEST(MsgDispatcherTest, SkippedTypeIsNotEvenParsed)
 {
-    // Сторона 'X' недопустима: разбор бросил бы FormatError.
-    // Обработчику A не нужен, значит разбора быть не должно — и исключения тоже.
+    // Side 'X' is invalid: parsing would throw FormatError.
+    // The handler doesn't need A, so there must be no parsing and no exception.
     const auto a = add_order_bytes('X');
     SysEventOnly handler;
 
@@ -166,7 +166,7 @@ namespace
 {
     namespace s = itch::test::samples;
 
-    // Каждый тип — образец и ожидаемая структура. Обработчик сверяет, что пришло ровно то, что разобрано из образца
+    // Each type: a sample and the expected struct. The handler checks that it received exactly what was parsed from the sample
     struct Collector
     {
         std::array<int, 256> calls{};
@@ -261,8 +261,8 @@ TEST(MsgDispatcherTest, EveryTypeReachesItsHandler)
 
 TEST(MsgDispatcherTest, FormatErrorCarriesRecordOffset)
 {
-    // Разбор бросает FormatError с позицией байта внутри сообщения,
-    // диспетчер заменяет её на смещение записи в буфере — как у reader
+    // Parsing throws FormatError with the byte position within the message;
+    // the dispatcher replaces it with the record offset in the buffer, as the reader does
     const auto s = sys_event_bytes('Z');
     const auto a = add_order_bytes('X');
 

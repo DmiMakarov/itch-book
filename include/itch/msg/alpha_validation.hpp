@@ -11,8 +11,8 @@
 
 namespace itch::msg
 {
-    // Многосимвольный код (Issue Sub-Type, Trading Action Reason): читает Alpha<Len> по смещению Offset
-    // и проверяет по списку допустимых значений. Список короткий и сообщения редкие — линейного поиска хватает.
+    // Multi-character code (Issue Sub-Type, Trading Action Reason): reads Alpha<Len> at Offset
+    // and checks it against the list of valid values. The list is short and the messages are rare, so linear search is enough.
     template <std::size_t Len, std::size_t Offset, std::size_t N, std::size_t K>
     [[nodiscard]] constexpr Alpha<Len> read_alpha_code(const std::span<const std::byte, N> bytes,
                                                        const std::array<Alpha<Len>, K>& allowed)

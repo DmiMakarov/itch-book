@@ -18,11 +18,11 @@ using itch::test::make_bytes;
 
 namespace
 {
-    // Add Order: все байты числовых полей разные — перепутанные поля или сдвиг смещения видны сразу
+    // Add Order: all numeric-field bytes are distinct, so swapped fields or a shifted offset show up immediately
     constexpr std::array<std::byte, 36> add_order_bytes(std::uint8_t side)
     {
         return make_bytes({
-            0x41,                                           // 0  тип 'A'
+            0x41,                                           // 0  type 'A'
             0x01, 0x02,                                     // 1  stock locate
             0x03, 0x04,                                     // 3  tracking number
             0x05, 0x06, 0x07, 0x08, 0x09, 0x0A,             // 5  timestamp
@@ -62,7 +62,7 @@ TEST(MsgAddOrderTest, DecodesSellOrder)
 
 TEST(MsgAddOrderTest, DecodesRealisticOrder)
 {
-    // Покупка 100 акций MSFT по 157.71: цена 1 577 100 = 0x0018108C
+    // Buy 100 shares of MSFT at 157.71: price 1,577,100 = 0x0018108C
     constexpr auto bytes = make_bytes({
         0x41,
         0x00, 0x2A,
@@ -70,7 +70,7 @@ TEST(MsgAddOrderTest, DecodesRealisticOrder)
         0x1F, 0x1A, 0xCE, 0xD9, 0xF0, 0x00,             // 09:30:00
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x39, // order ref 12345
         'B',
-        0x00, 0x00, 0x00, 0x64,                         // 100 акций
+        0x00, 0x00, 0x00, 0x64,                         // 100 shares
         'M', 'S', 'F', 'T', ' ', ' ', ' ', ' ',
         0x00, 0x18, 0x10, 0x8C,
     });
@@ -89,7 +89,7 @@ TEST(MsgAddOrderTest, DecodesRealisticOrder)
 TEST(MsgAddOrderTest, DecodesMaxValues)
 {
     auto bytes = add_order_bytes('S');
-    for (std::size_t i = 1; i < 19; ++i) // заголовок и order ref
+    for (std::size_t i = 1; i < 19; ++i) // header and order ref
     {
         bytes[i] = std::byte{0xFF};
     }
@@ -119,7 +119,7 @@ TEST(MsgAddOrderTest, SideValuesMatchSpec)
 
 TEST(MsgAddOrderTest, RejectsInvalidSide)
 {
-    // 'b' — регистр, 'A' — тип сообщения, ' ' и 0x00 — пустые значения, 0xFF — индекс 255
+    // 'b' tests case, 'A' is a message type, ' ' and 0x00 are empty values, 0xFF is index 255
     constexpr std::array<std::uint8_t, 5> invalid{'b', 'A', ' ', 0x00, 0xFF};
 
     for (const auto side : invalid)
@@ -132,7 +132,7 @@ TEST(MsgAddOrderTest, RejectsInvalidSide)
         }
         catch (const itch::FormatError& e)
         {
-            // Позиция байта внутри сообщения; смещение записи подставляет диспетчер
+            // Byte position within the message; the dispatcher substitutes the record offset
             EXPECT_EQ(e.offset(), 19u) << e.what();
         }
     }

@@ -1,9 +1,9 @@
 #ifndef ITCH_TESTS_MSG_SAMPLES_HPP
 #define ITCH_TESTS_MSG_SAMPLES_HPP
 
-// Образцовые сообщения каждого типа и то, во что они должны разобраться.
-// Числовые поля — с разными байтами (0x11.., 0x21.., ...), чтобы перепутанные поля или сдвиг смещения
-// давали другое значение. Смещения — из docs/itch50_messages.md.
+// Sample messages of every type and what they must parse into.
+// Numeric fields use distinct bytes (0x11.., 0x21.., ...) so that swapped fields or a shifted offset
+// yield a different value. Offsets come from docs/itch50_messages.md.
 
 #include <array>
 #include <cstddef>

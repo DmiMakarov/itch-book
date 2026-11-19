@@ -34,7 +34,7 @@ namespace itch
         DirectListingCapitalRaisePrice = 'O'
     };
 
-    // Описание типа сообщения: длина без 2-байтового префикса длины из файла
+    // Message type descriptor: length excludes the 2-byte length prefix from the file
     struct MsgInfo
     {
         MsgType type;
@@ -42,7 +42,7 @@ namespace itch
         std::string_view name;
     };
 
-    // Единственный источник правды: docs/itch50_messages.md, раздел 4 спецификации ITCH 5.0
+    // Single source of truth: docs/itch50_messages.md, section 4 of the ITCH 5.0 spec
     inline constexpr std::array<MsgInfo, 23> msg_infos{{
         {MsgType::SystemEvent, 12, "System Event"},
         {MsgType::StockDirectory, 39, "Stock Directory"},
@@ -69,7 +69,7 @@ namespace itch
         {MsgType::DirectListingCapitalRaisePrice, 48, "DLCR Price Discovery"},
     }};
 
-    // Байт типа -> индекс 0..255 (через unsigned, чтобы байты > 127 не стали отрицательными)
+    // Type byte -> index 0..255 (via unsigned so bytes > 127 don't become negative)
     constexpr std::size_t type_index(MsgType type) noexcept
     {
         return static_cast<std::uint8_t>(type);
@@ -77,7 +77,7 @@ namespace itch
 
     constexpr std::array<std::uint8_t, 256> make_length_table() noexcept
     {
-        std::array<std::uint8_t, 256> table{}; // 0 = неизвестный тип
+        std::array<std::uint8_t, 256> table{}; // 0 = unknown type
         for (const auto& info : msg_infos)
         {
             table[type_index(info.type)] = info.length;
@@ -85,7 +85,7 @@ namespace itch
         return table;
     }
 
-    // Таблица поиска для цикла разбора: msg_lengths[байт типа] -> ожидаемая длина, 0 если тип неизвестен
+    // Lookup table for the parse loop: msg_lengths[type byte] -> expected length, 0 if the type is unknown
     inline constexpr std::array<std::uint8_t, 256> msg_lengths = make_length_table();
 }
 

@@ -7,13 +7,13 @@
 
 namespace itch::msg
 {
-    // Тип кросса (аукциона). Общий для Cross Trade ('Q') и NOII ('I'), но наборы допустимых значений разные.
+    // Cross (auction) type. Shared by Cross Trade ('Q') and NOII ('I'), but their sets of valid values differ.
     enum class CrossType: char
     {
         Opening = 'O',
         Closing = 'C',
         IpoOrHalted = 'H',
-        ExtendedTradingClose = 'A'   // только NOII, с 2022 года
+        ExtendedTradingClose = 'A'   // NOII only, since 2022
     };
 
     inline constexpr std::array cross_trade_cross_types{

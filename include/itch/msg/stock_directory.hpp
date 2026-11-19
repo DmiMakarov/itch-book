@@ -75,7 +75,7 @@ namespace itch::msg
 
     inline constexpr std::array<bool, 256> valid_financial_status = make_valid_table(financial_statuses);
 
-    // Приложение D спецификации
+    // Spec Appendix D
     enum class IssueClassification: char
     {
         AmericanDepositaryShare = 'A',
@@ -117,7 +117,7 @@ namespace itch::msg
 
     inline constexpr std::array<bool, 256> valid_issue_classification = make_valid_table(issue_classifications);
 
-    // Приложение E спецификации: коды из 1–2 символов, дополненные пробелом
+    // Spec Appendix E: 1-2 character codes, space-padded
     inline constexpr std::array issue_sub_types{
         Alpha<2>{"A"},  Alpha<2>{"AI"}, Alpha<2>{"B"},  Alpha<2>{"C"},  Alpha<2>{"CB"}, Alpha<2>{"CF"},
         Alpha<2>{"CL"}, Alpha<2>{"CM"}, Alpha<2>{"CO"}, Alpha<2>{"CT"}, Alpha<2>{"CU"}, Alpha<2>{"CW"},

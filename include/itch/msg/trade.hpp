@@ -16,8 +16,8 @@
 
 namespace itch::msg
 {
-    // Сделка со скрытой заявкой: стакан не меняет.
-    // order_ref с 2010 года всегда 0, side с 2014 года всегда 'B' — но проверяем по спецификации ('B'/'S')
+    // Trade against a hidden order: does not change the book.
+    // order_ref has always been 0 since 2010 and side always 'B' since 2014, but we validate per the spec ('B'/'S')
     struct TradeMsg
     {
         Header header{};

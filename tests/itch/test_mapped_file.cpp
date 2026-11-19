@@ -16,14 +16,14 @@
 
 namespace fs = std::filesystem;
 
-// Свойства типа проверяются при компиляции
+// Type properties are checked at compile time
 static_assert(!std::is_copy_constructible_v<itch::MappedFile>);
 static_assert(!std::is_copy_assignable_v<itch::MappedFile>);
 static_assert(std::is_nothrow_move_constructible_v<itch::MappedFile>);
 static_assert(std::is_nothrow_move_assignable_v<itch::MappedFile>);
-static_assert(!std::is_convertible_v<fs::path, itch::MappedFile>); // конструктор explicit
+static_assert(!std::is_convertible_v<fs::path, itch::MappedFile>); // constructor is explicit
 
-// Каждый тест получает свой временный каталог; после теста он удаляется
+// Each test gets its own temporary directory, removed after the test
 class MappedFileTest : public ::testing::Test
 {
 protected:
@@ -48,7 +48,7 @@ protected:
         return path;
     }
 
-    // Детерминированное содержимое: разные seed дают разные файлы
+    // Deterministic content: different seeds produce different files
     [[nodiscard]] static std::vector<std::byte> make_bytes(std::size_t n, unsigned seed)
     {
         std::vector<std::byte> bytes(n);
@@ -114,7 +114,7 @@ TEST_F(MappedFileTest, MoveConstructorTransfersOwnership)
 
     EXPECT_EQ(target.bytes().data(), data);
     EXPECT_TRUE(std::ranges::equal(target.bytes(), content));
-    EXPECT_TRUE(source.bytes().empty()); // NOLINT(bugprone-use-after-move): проверяем состояние после move
+    EXPECT_TRUE(source.bytes().empty()); // NOLINT(bugprone-use-after-move): checking the moved-from state
 }
 
 TEST_F(MappedFileTest, MoveAssignmentReplacesMapping)
@@ -135,7 +135,7 @@ TEST_F(MappedFileTest, SelfMoveAssignmentKeepsMapping)
     const auto content = make_bytes(5'000, 6);
     itch::MappedFile file{write_file("data.bin", content)};
 
-    // Через ссылку, чтобы компилятор не ругался на явное самоперемещение (-Wself-move)
+    // Through a reference so the compiler doesn't warn about explicit self-move (-Wself-move)
     auto& alias = file;
     file = std::move(alias);
 

@@ -12,7 +12,7 @@
 
 namespace itch::msg
 {
-    // Частичная отмена: заявка уменьшается на cancelled_shares, но остаётся в стакане
+    // Partial cancel: the order is reduced by cancelled_shares but stays in the book
     struct OrderCancelMsg
     {
         Header header{};

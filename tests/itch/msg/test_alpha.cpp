@@ -11,7 +11,7 @@ using itch::test::make_bytes;
 
 namespace
 {
-    // Всё ниже проверяется при компиляции: Alpha целиком constexpr
+    // Everything below is checked at compile time: Alpha is fully constexpr
     static_assert(Alpha<8>{}.empty());
     static_assert(Alpha<8>{}.view().empty());
     static_assert(Alpha<8>{"AAPL"}.view() == "AAPL");
@@ -42,7 +42,7 @@ TEST(MsgAlphaTest, FullLengthHasNothingToTrim)
 
 TEST(MsgAlphaTest, FromBytesMatchesFromString)
 {
-    // Так тикер лежит в сообщении: выровнен влево, дополнен пробелами
+    // This is how a stock symbol appears in a message: left-justified, space-padded
     constexpr auto bytes = make_bytes({'M', 'S', 'F', 'T', ' ', ' ', ' ', ' '});
     const Alpha<8> from_bytes{std::span<const std::byte, 8>{bytes}};
 
@@ -52,13 +52,13 @@ TEST(MsgAlphaTest, FromBytesMatchesFromString)
 
 TEST(MsgAlphaTest, TrimsOnlyTrailingSpaces)
 {
-    // Внутренние пробелы — часть значения (тикеры вида "BRK A")
+    // Inner spaces are part of the value (symbols like "BRK A")
     EXPECT_EQ(Alpha<8>{"BRK A"}.view(), "BRK A");
 }
 
 TEST(MsgAlphaTest, LeadingSpaceIsNotEmpty)
 {
-    // Нарушает спецификацию, но empty() и view() должны согласовываться
+    // Violates the spec, but empty() and view() must agree
     const Alpha<8> a{" X"};
     EXPECT_FALSE(a.empty());
     EXPECT_EQ(a.view(), " X");

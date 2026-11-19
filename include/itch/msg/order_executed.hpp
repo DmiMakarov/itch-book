@@ -12,7 +12,7 @@
 
 namespace itch::msg
 {
-    // Цены здесь нет: исполнение по цене заявки из 'A'/'F'
+    // No price here: executed at the order's price from 'A'/'F'
     struct OrderExecutedMsg
     {
         Header header{};

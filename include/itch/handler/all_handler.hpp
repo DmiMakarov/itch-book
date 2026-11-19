@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <cstddef>
 
-// Принимает все типы сообщений: dispatch разбирает каждое.
-// checksum по timestamp — чтобы результат разбора был использован и оптимизатор его не выкинул.
+// Accepts all message types: dispatch parses every one.
+// Checksum over timestamps so the parse result is used and the optimizer can't discard it.
 
 namespace itch::handler
 {

@@ -1,4 +1,4 @@
-// Сделки и аукционы: P, Q, B, I, N, O.
+// Trades and crosses: P, Q, B, I, N, O.
 #include <gtest/gtest.h>
 
 #include "msg_samples.hpp"
@@ -28,7 +28,7 @@ TEST(MsgTradeTest, DecodesAllFields)
 
 TEST(MsgTradeTest, FlagDomainsMatchSpec)
 {
-    // На практике с 2014 года всегда 'B', но спецификация допускает 'B' и 'S'
+    // In practice always 'B' since 2014, but the spec allows 'B' and 'S'
     expect_flag_domain(read_trade_msg, trade_bytes(), 19, "BS", [](const auto& m) { return m.side; });
 }
 
@@ -41,7 +41,7 @@ TEST(MsgCrossTradeTest, DecodesAllFields)
 
 TEST(MsgCrossTradeTest, FlagDomainsMatchSpec)
 {
-    // Без 'A': Extended Trading Close бывает только в NOII
+    // No 'A': Extended Trading Close occurs only in NOII
     expect_flag_domain(read_cross_trade_msg, cross_trade_bytes(), 39, "OCH", [](const auto& m) { return m.cross_type; });
 }
 
@@ -79,7 +79,7 @@ TEST(MsgNoiiTest, FlagDomainsMatchSpec)
 
 TEST(MsgNoiiTest, StockIsAtOffset28)
 {
-    // Stock стоит после Imbalance Direction, а не сразу после заголовка
+    // Stock follows Imbalance Direction, not the header
     const auto bytes = MsgBuilder<50>{'I'}
                            .put_uint(11, 8, 0)
                            .put_uint(19, 8, 0)

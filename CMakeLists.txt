@@ -3,7 +3,7 @@ project(itch-book CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)        # -std=c++20, а не -std=gnu++20
+set(CMAKE_CXX_EXTENSIONS OFF)        # -std=c++20, not -std=gnu++20
 
 find_package(GTest REQUIRED)
 find_package(benchmark REQUIRED)
