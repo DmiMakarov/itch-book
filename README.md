@@ -17,13 +17,15 @@ AMD Ryzen 5 7500F, GCC 13.3, `-O2`:
 
 | Mode | ns / message | M messages / s | IPC |
 |---|---:|---:|---:|
-| Framing only (`ItchReader::next()`) | 4.2 | 236 | 3.97 |
-| Dispatch, one type decoded | 5.9 | 171 | 3.88 |
-| Dispatch, all 23 types decoded and validated | 12.2 | 82 | 2.87 |
+| Framing only (`ItchReader::next()`) | 3.7 | 270 | 4.05 |
+| Dispatch, one type decoded | 5.6 | 178 | 4.01 |
+| Dispatch, all 23 types decoded and validated | 11.0 | 91 | 3.00 |
+
+Baseline before optimizations: 4.2 / 5.8 / 12.2 ns.
 
 The whole trading day (268,744,780 messages, 8.25 GB) parses in ~3.3 s of CPU time. Reading it from disk
 takes 10–27 s, so end to end the bottleneck is I/O, not parsing.
-Methodology, `perf stat` counters, the profile and the list of optimization candidates are in
+Methodology, `perf stat` counters, the profile, optimization iterations and the remaining candidates are in
 [docs/benchmarks.md](docs/benchmarks.md).
 
 ## Build and run

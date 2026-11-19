@@ -97,7 +97,7 @@ Each item is a separate run against this baseline.
 
 - [ ] Make `ItchReader::next()` inlinable (move it to the header) or enable LTO.
 - [ ] Avoid reading the timestamp twice: take `Message::timestamp` in `read_header`, or do not parse it in `next()`.
-- [ ] Faster `be48`: e.g. `be16 << 32 | be32` — two loads instead of six.
+- [x] Faster `be48`: e.g. `be16 << 32 | be32` — two loads instead of six. Done in [iteration 1](#iteration-1--faster-be48--2026-11-19).
 - [ ] Inspect `perf annotate` for `dispatch`: what the `switch` compiles to in Sys (a single comparison?) and in All (a jump table?).
 - [ ] Measure the effect of `-march=native` and `-O3`.
 
@@ -130,6 +130,61 @@ $PERF report --stdio --no-children
 # full file
 ./build/release/main --file=data/12302019.NASDAQ_ITCH50 --handler=all
 ```
+
+---
+
+## Iteration 1 — faster `be48` — 2026-11-19
+
+**Commit:** `3de7404` (against baseline `6751b69`, same code as `e27f636` plus docs)
+
+**Raw logs:** `docs/bench/iter1/` (`bench_all.log` — every benchmark ×20, `ab_dispatch.log` — A/B runs,
+`perf_stat.log`, `perf_stat_diff.log` — fixed-iteration counters)
+
+### Change
+
+GCC fuses the byte-by-byte `be16` / `be32` / `be64` into one load plus a byte swap, but there is no 6-byte load,
+so the old `be48` compiled into six separate loads, shifts and ORs. It is now composed from the two fast functions:
+
+```cpp
+return (static_cast<std::uint64_t>(be16(src.first<2>())) << 32) | static_cast<std::uint64_t>(be32(src.last<4>()));
+```
+
+### Method
+
+- **A/B on the same machine, same session:** both commits built in separate worktrees, runs interleaved
+  (baseline, new, baseline, new), 20 repetitions each. The baseline numbers above were taken on another day; comparing
+  against them directly would mix in CPU frequency drift.
+- **Exact per-message counters:** `perf stat` with a fixed number of iterations (`--benchmark_min_time=10x` and `60x`),
+  difference divided by 50 × 7,844,756 messages. Loading `sample()` cancels out, so instructions per message come out as
+  whole numbers. The "~" estimates in the baseline table used rate × user time and were off by 5–10 %.
+
+### Results
+
+Median of 20 repetitions, two A/B rounds (ranges are the two rounds):
+
+| | Baseline, ns/msg | `be48`, ns/msg | Δ | instr/msg | IPC |
+|---|---:|---:|---:|---|---|
+| Frame | 4.20–4.23 | **3.71** | **−12 %** | 85 → 78 | 4.48 → 4.05 |
+| Sys | 5.80–5.82 | 5.61–5.64 | −3 % (noise) | 111 → 104 | 3.98 → 4.01 |
+| All | 11.9–12.3 | **10.9–11.1** | **−9 %** | 173 → 158 | 2.93 → 3.00 |
+
+Branch misses are unchanged (0.37 per message in All). Microbenchmark: `be48` 1.00 → 0.68 ns
+(`be64` 0.48 ns, `be16` / `be32` 0.43 ns).
+
+### Conclusions
+
+1. **Each `be48` call was ~7 instructions too long.** Frame and Sys read the timestamp once (in `next()`) and lost
+   exactly 7 instructions per message; All reads it twice (`next()` and `read_header`) and lost ~15.
+2. **Frame gained the most in time, Sys did not.** The same 7 instructions are a larger share of Frame's work;
+   Sys's difference is within cv.
+3. **The duplicated timestamp read is not worth an API change.** Upper bound measured by temporarily replacing the read
+   in `read_header` with `0` (tests do not compile, so only the `bench` target was built): All 10.8 → 10.4 ns, ~4 %,
+   i.e. at the noise level — and an overestimate, since `AllHandler`'s checksum over the timestamp becomes constant too.
+   Passing `Message::timestamp` into all 23 `read_*_msg` functions is not justified by this.
+
+### Next
+
+- Read the timestamp in `next()` with a single `be64` over the tracking number + timestamp, masked to 48 bits.
 
 ---
 
