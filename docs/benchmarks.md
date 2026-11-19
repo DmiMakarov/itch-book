@@ -7,8 +7,6 @@ Rule: one change — one run against the baseline. If the improvement is smaller
 
 ## Baseline v1 — 2026-11-18
 
-**Commit:** `e27f636`
-
 ### Environment
 
 | | |
@@ -133,8 +131,6 @@ $PERF report --stdio --no-children
 
 ## Iteration 1 — faster `be48` — 2026-11-19
 
-**Commit:** `3de7404` (against baseline `6751b69`, same code as `e27f636` plus docs)
-
 ### Change
 
 GCC fuses the byte-by-byte `be16` / `be32` / `be64` into one load plus a byte swap, but there is no 6-byte load,
@@ -146,7 +142,7 @@ return (static_cast<std::uint64_t>(be16(src.first<2>())) << 32) | static_cast<st
 
 ### Method
 
-- **A/B on the same machine, same session:** both commits built in separate worktrees, runs interleaved
+- **A/B on the same machine, same session:** both versions built in separate worktrees, runs interleaved
   (baseline, new, baseline, new), 20 repetitions each. The baseline numbers above were taken on another day; comparing
   against them directly would mix in CPU frequency drift.
 - **Exact per-message counters:** `perf stat` with a fixed number of iterations (`--benchmark_min_time=10x` and `60x`),
@@ -185,8 +181,6 @@ Branch misses are unchanged (0.37 per message in All). Microbenchmark: `be48` 1.
 ---
 
 ## Iteration 2 — timestamp via one `be64` — 2026-11-19
-
-**Commit:** `e540d44` (against iteration 1, `3de7404`)
 
 ### Change
 
