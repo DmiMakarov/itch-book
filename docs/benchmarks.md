@@ -7,7 +7,7 @@ Rule: one change — one run against the baseline. If the improvement is smaller
 
 ## Baseline v1 — 2026-11-18
 
-**Commit:** `83e9806`
+**Commit:** `e27f636`
 
 **Raw logs:** `docs/bench/` (`bench_tmp.log` — all benchmarks ×20, `perf_stat.log`, `perf_record.log`, `perf_report.log`)
 
