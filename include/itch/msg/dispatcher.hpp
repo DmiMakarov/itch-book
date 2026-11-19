@@ -44,7 +44,7 @@ namespace itch
     }
 
     template <typename Handler>
-    void dispatch(const Message& msg, Handler& handler)
+    inline void dispatch(const Message& msg, Handler& handler)
     {
         try
         {
