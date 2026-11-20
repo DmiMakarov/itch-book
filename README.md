@@ -17,13 +17,15 @@ AMD Ryzen 5 7500F, GCC 13.3, `-O2`:
 
 | Mode | ns / message | M messages / s | IPC |
 |---|---:|---:|---:|
-| Framing only (`ItchReader::next()`) | 3.5 | 289 | 4.28 |
-| Dispatch, one type decoded | 5.3 | 189 | 3.79 |
-| Dispatch, all 23 types decoded and validated | 10.7 | 94 | 2.86 |
+| Framing only (`ItchReader::next()`) | 1.7 | 600 | 4.2 |
+| Dispatch, one type decoded | 1.8 | 544 | 4.4 |
+| Dispatch, all 23 types decoded and validated | 8.7 | 115 | 2.1 |
 
-Baseline before optimizations: 4.2 / 5.8 / 12.2 ns.
+In the last row the handler consumes every decoded struct (`benchmark::DoNotOptimize`), so no field can be optimized
+away. Baseline before optimizations: 4.2 / 5.8 / 12.2 ns (the last one measured with a handler that read only the
+timestamp, which overstates the speed).
 
-The whole trading day (268,744,780 messages, 8.25 GB) parses in ~3.3 s of CPU time. Reading it from disk
+The whole trading day (268,744,780 messages, 8.25 GB) decodes in ~2.3 s of CPU time. Reading it from disk
 takes 10–27 s, so end to end the bottleneck is I/O, not parsing.
 Methodology, `perf stat` counters, the profile, optimization iterations and the remaining candidates are in
 [docs/benchmarks.md](docs/benchmarks.md).
