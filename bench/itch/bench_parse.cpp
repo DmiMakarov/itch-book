@@ -51,6 +51,21 @@ const std::vector<std::byte>& sample()
     static const std::vector<std::byte> data = load_prefix(sample_path(), std::size_t{1} << 28);
     return data;
 }
+
+// Accepts all message types and consumes every decoded struct as a whole, like a real handler would:
+// no field can be optimized away. AllHandler uses only header.timestamp, so with deep inlining the compiler
+// may skip computing the rest and BM_DispatchAll overstates the speed.
+struct OpaqueHandler
+{
+    template <typename Msg>
+    void on(const Msg& msg)
+    {
+        // DoNotOptimize(const T&) is deprecated: it lets the compiler assume the value is only read.
+        // A non-const copy forces every field to be computed and stored.
+        Msg copy = msg;
+        benchmark::DoNotOptimize(copy);
+    }
+};
 }
 
 void BM_DispatchAll(benchmark::State& state)
@@ -111,6 +126,25 @@ void BM_DispatchSys(benchmark::State& state)
     state.SetBytesProcessed(static_cast<std::int64_t>(buf->size() * state.iterations()));
 }
 
-BENCHMARK(BM_DispatchAll)->Unit(benchmark::kMillisecond); 
+void BM_DispatchOpaque(benchmark::State& state)
+{
+    const std::vector<std::byte>* buf = nullptr;
+    try { buf = &sample(); }
+    catch (const std::exception& e) { state.SkipWithError(e.what()); return; }
+
+    std::uint64_t total = 0;
+    for (auto _ : state)
+    {
+        itch::ItchReader reader{*buf};           // fresh reader for every iteration
+        OpaqueHandler handler{};
+        const auto counts = itch::handler::consume(reader, [&handler](const itch::Message& msg) { itch::dispatch(msg, handler); });
+        total += counts.total;
+    }
+    state.SetItemsProcessed(static_cast<std::int64_t>(total));
+    state.SetBytesProcessed(static_cast<std::int64_t>(buf->size() * state.iterations()));
+}
+
+BENCHMARK(BM_DispatchAll)->Unit(benchmark::kMillisecond);
+BENCHMARK(BM_DispatchOpaque)->Unit(benchmark::kMillisecond);
 BENCHMARK(BM_DispatchFrame)->Unit(benchmark::kMillisecond);    
 BENCHMARK(BM_DispatchSys)->Unit(benchmark::kMillisecond);    

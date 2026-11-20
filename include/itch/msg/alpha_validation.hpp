@@ -5,12 +5,22 @@
 #include <cstddef>
 #include <format>
 #include <span>
+#include <string_view>
 
 #include "itch/error_handling/format_error.hpp"
 #include "itch/msg/alpha.hpp"
 
 namespace itch::msg
 {
+
+    namespace detail
+    {
+        [[noreturn]] [[gnu::cold]] [[gnu::noinline]] inline void  throw_unknown_alpha_code(std::string_view code, std::size_t offset)
+        {
+            throw FormatError(std::format("Unknown code in message: '{}' at offset {}", code, offset), offset);
+        }
+    } //namespace detail
+
     // Multi-character code (Issue Sub-Type, Trading Action Reason): reads Alpha<Len> at Offset
     // and checks it against the list of valid values. The list is short and the messages are rare, so linear search is enough.
     template <std::size_t Len, std::size_t Offset, std::size_t N, std::size_t K>
@@ -29,7 +39,7 @@ namespace itch::msg
             }
         }
 
-        throw FormatError(std::format("Unknown code in message: '{}' at offset {}", code.view(), Offset), Offset);
+        detail::throw_unknown_alpha_code(code.view(), Offset);
     }
 } // namespace itch::msg
 

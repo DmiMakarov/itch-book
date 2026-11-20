@@ -1,12 +1,12 @@
 #include "itch/itch_reader.hpp"
 
 #include <cstddef>
+#include <cstdint>
 #include <format>
-#include <optional>
 #include <span>
 #include <stdexcept>
 
-#include "itch/endian.hpp"
+#include "itch/error_handling/format_error.hpp"
 #include "itch/msg_type.hpp"
 
 itch::ItchReader::ItchReader(std::span<const std::byte> bytes_, std::size_t offset_) : bytes{bytes_}, offset{offset_}
@@ -17,60 +17,37 @@ itch::ItchReader::ItchReader(std::span<const std::byte> bytes_, std::size_t offs
     }
 }
 
-std::optional<itch::Message> itch::ItchReader::next()
+void itch::detail::throw_truncated_prefix(std::size_t offset, std::size_t left)
 {
-    if (offset == bytes.size())
-    {
-        return std::nullopt;
-    }
+    throw FormatError(std::format("truncated length prefix at offset {}: only {} byte left", offset, left), offset);
+}
 
-    const std::size_t left = bytes.size() - offset;
+void itch::detail::throw_empty_message(std::size_t offset)
+{
+    throw FormatError(std::format("empty message at offset {}", offset), offset);
+}
 
-    if (left < 2)
-    {
-        throw FormatError(std::format("truncated length prefix at offset {}: only {} byte left", offset, left), offset);
-    }
+void itch::detail::throw_truncated_message(std::size_t offset, std::size_t len, std::size_t left)
+{
+    throw FormatError(std::format("truncated message at offset {}: length {}, only {} bytes left", offset, len, left),
+                      offset);
+}
 
-    const std::size_t len = itch::endian::be16(bytes.subspan(offset).first<2>());
+void itch::detail::throw_unknown_type(std::size_t offset, MsgType type)
+{
+    throw FormatError(std::format("unknown message type 0x{:02x} at offset {}", type_index(type), offset), offset);
+}
 
-    if (len == 0)
-    {
-        throw FormatError(std::format("empty message at offset {}", offset), offset);
-    }
+void itch::detail::throw_length_mismatch(std::size_t offset, MsgType type, std::size_t expected_len, std::size_t len)
+{
+    throw FormatError(std::format("length mismatch for type '{}' at offset {}: expected {}, got {}",
+                                  static_cast<char>(type), offset, expected_len, len),
+                      offset);
+}
 
-    if (left - 2 < len)
-    {
-        throw FormatError(
-            std::format("truncated message at offset {}: length {}, only {} bytes left", offset, len, left - 2),
-            offset);
-    }
-
-    const MsgType type{std::to_integer<char>(bytes[offset + 2])};
-    const std::size_t expected_len = msg_lengths[type_index(type)];
-
-    if (expected_len == 0)
-    {
-        throw FormatError(std::format("unknown message type 0x{:02x} at offset {}", type_index(type), offset), offset);
-    }
-
-    if (len != expected_len)
-    {
-        throw FormatError(std::format("length mismatch for type '{}' at offset {}: expected {}, got {}",
-                                      static_cast<char>(type), offset, expected_len, len),
-                          offset);
-    }
-
-    const std::uint64_t timestamp = itch::endian::be48(bytes.subspan(offset + 2 + 5).first<6>());
-
-    if (timestamp < prev_timestamp)
-    {
-        throw FormatError(std::format("timestamp went backwards at offset {}: {} < previous {}", offset, timestamp,
-                                      prev_timestamp),
-                          offset);
-    }
-    prev_timestamp = timestamp;
-
-    const Message msg{type, bytes.subspan(offset + 2, len), offset, timestamp};
-    offset += 2 + len;
-    return msg;
+void itch::detail::throw_timestamp_backwards(std::size_t offset, std::uint64_t timestamp, std::uint64_t prev_timestamp)
+{
+    throw FormatError(
+        std::format("timestamp went backwards at offset {}: {} < previous {}", offset, timestamp, prev_timestamp),
+        offset);
 }

@@ -7,10 +7,6 @@ Rule: one change — one run against the baseline. If the improvement is smaller
 
 ## Baseline v1 — 2026-11-18
 
-**Commit:** `e27f636`
-
-**Raw logs:** `docs/bench/` (`bench_tmp.log` — all benchmarks ×20, `perf_stat.log`, `perf_record.log`, `perf_report.log`)
-
 ### Environment
 
 | | |
@@ -95,11 +91,12 @@ Full file through `main` (8.25 GB, does not fit in the page cache): 39–44 ns/m
 
 Each item is a separate run against this baseline.
 
-- [ ] Make `ItchReader::next()` inlinable (move it to the header) or enable LTO.
-- [ ] Avoid reading the timestamp twice: take `Message::timestamp` in `read_header`, or do not parse it in `next()`.
-- [ ] Faster `be48`: e.g. `be16 << 32 | be32` — two loads instead of six.
+- [x] Make `ItchReader::next()` inlinable (move it to the header) or enable LTO. Done in
+  [iteration 3](#iteration-3--cold-error-paths-and-inlining--2026-11-19): moving alone was not enough, the error paths had to go out of line; LTO gave mixed results.
+- [x] Avoid reading the timestamp twice. Measured in [iteration 1](#iteration-1--faster-be48--2026-11-19): upper bound at noise level, not worth an API change.
+- [x] Faster `be48`: e.g. `be16 << 32 | be32` — two loads instead of six. Done in [iteration 1](#iteration-1--faster-be48--2026-11-19).
 - [ ] Inspect `perf annotate` for `dispatch`: what the `switch` compiles to in Sys (a single comparison?) and in All (a jump table?).
-- [ ] Measure the effect of `-march=native` and `-O3`.
+- [ ] Measure the effect of `-march=native`. (`-O3`: no gain on the opaque benchmark, see iteration 3.)
 
 ### Measurement limitations
 
@@ -107,6 +104,7 @@ Each item is a separate run against this baseline.
 - In `BM_DispatchAll`, only a checksum over `header.timestamp` is passed to `DoNotOptimize`: the compiler is free
   not to compute fields that do not feed into it (enum validation cannot be removed — it throws).
   The All figure may therefore be understated; verify with a variant that calls `DoNotOptimize(msg)` on every struct.
+  Confirmed in [iteration 3](#the-allhandler-benchmark-overstates-gains): with aggressive inlining the gap reaches 2×.
 - No frame pointer — stacks in `perf record -g` are unreadable, so only a flat profile is available.
 
 ### How to reproduce
@@ -130,6 +128,212 @@ $PERF report --stdio --no-children
 # full file
 ./build/release/main --file=data/12302019.NASDAQ_ITCH50 --handler=all
 ```
+
+---
+
+## Iteration 1 — faster `be48` — 2026-11-19
+
+### Change
+
+GCC fuses the byte-by-byte `be16` / `be32` / `be64` into one load plus a byte swap, but there is no 6-byte load,
+so the old `be48` compiled into six separate loads, shifts and ORs. It is now composed from the two fast functions:
+
+```cpp
+return (static_cast<std::uint64_t>(be16(src.first<2>())) << 32) | static_cast<std::uint64_t>(be32(src.last<4>()));
+```
+
+### Method
+
+- **A/B on the same machine, same session:** both versions built in separate worktrees, runs interleaved
+  (baseline, new, baseline, new), 20 repetitions each. The baseline numbers above were taken on another day; comparing
+  against them directly would mix in CPU frequency drift.
+- **Exact per-message counters:** `perf stat` with a fixed number of iterations (`--benchmark_min_time=10x` and `60x`),
+  difference divided by 50 × 7,844,756 messages. Loading `sample()` cancels out, so instructions per message come out as
+  whole numbers. The "~" estimates in the baseline table used rate × user time and were off by 5–10 %.
+
+### Results
+
+Median of 20 repetitions, two A/B rounds (ranges are the two rounds):
+
+| | Baseline, ns/msg | `be48`, ns/msg | Δ | instr/msg | IPC |
+|---|---:|---:|---:|---|---|
+| Frame | 4.20–4.23 | **3.71** | **−12 %** | 85 → 78 | 4.48 → 4.05 |
+| Sys | 5.80–5.82 | 5.61–5.64 | −3 % (noise) | 111 → 104 | 3.98 → 4.01 |
+| All | 11.9–12.3 | **10.9–11.1** | **−9 %** | 173 → 158 | 2.93 → 3.00 |
+
+Branch misses are unchanged (0.37 per message in All). Microbenchmark: `be48` 1.00 → 0.68 ns
+(`be64` 0.48 ns, `be16` / `be32` 0.43 ns).
+
+### Conclusions
+
+1. **Each `be48` call was ~7 instructions too long.** Frame and Sys read the timestamp once (in `next()`) and lost
+   exactly 7 instructions per message; All reads it twice (`next()` and `read_header`) and lost ~15.
+2. **Frame gained the most in time, Sys did not.** The same 7 instructions are a larger share of Frame's work;
+   Sys's difference is within cv.
+3. **The duplicated timestamp read is not worth an API change.** Upper bound measured by temporarily replacing the read
+   in `read_header` with `0` (tests do not compile, so only the `bench` target was built): All 10.8 → 10.4 ns, ~4 %,
+   i.e. at the noise level — and an overestimate, since `AllHandler`'s checksum over the timestamp becomes constant too.
+   Passing `Message::timestamp` into all 23 `read_*_msg` functions is not justified by this.
+
+### Next
+
+- Read the timestamp in `next()` with a single `be64` over the tracking number + timestamp, masked to 48 bits —
+  done in [iteration 2](#iteration-2--timestamp-via-one-be64--2026-11-19).
+
+---
+
+## Iteration 2 — timestamp via one `be64` — 2026-11-19
+
+### Change
+
+There is no 6-byte load, but the timestamp is always preceded by the 2-byte tracking number inside the same
+message header. So the 8 bytes at message offset 3 (tracking number + timestamp) are read with one `be64`, and the
+timestamp is the low 48 bits:
+
+```cpp
+// next()
+const std::uint64_t timestamp = be64(bytes.subspan(offset + 2 + 3).first<8>()) & 0xFFFF'FFFF'FFFF;
+
+// read_header(): the same load also yields the tracking number
+const std::uint64_t common_number = be64(bytes.subspan(3).first<8>());
+const std::uint16_t tracking_number = static_cast<std::uint16_t>(common_number >> 48);
+const std::uint64_t timestamp = common_number & 0xFFFF'FFFF'FFFF;
+```
+
+The two places were measured separately and together: (1) `read_header` only, (2) `next()` only, (3) both.
+
+### Method
+
+Same as iteration 1: four builds in separate worktrees (iteration 1 and variants 1–3), exact per-message counters
+from fixed-iteration `perf stat` differences, then two interleaved A/B rounds × 20 repetitions.
+
+### Results
+
+Instructions per message (exact):
+
+| | Frame | Sys | All |
+|---|---:|---:|---:|
+| Iteration 1 (`be48`) | 78 | 104 | 157.8 |
+| 1: `read_header` only | 78 | 104 | 154.4 |
+| 2: `next()` only | 71 | 97 | 150.8 |
+| 3: both | **71** | **97** | **147.4** |
+
+Time, ns/msg, medians of two A/B rounds:
+
+| | Frame | Sys | All |
+|---|---|---|---|
+| Iteration 1 (`be48`) | 3.75–3.80 | 5.53–5.74 | 10.93–11.03 |
+| 1: `read_header` only | 3.77–4.04 | 5.48–5.65 | 11.07–11.10 |
+| 2: `next()` only | 3.43–3.74 | 5.33–5.41 | 10.94–11.74 |
+| 3: both | **3.46** | **5.25–5.33** | **10.64–10.66** |
+
+### Conclusions
+
+1. **The effects add up exactly.** `next()` runs for every message and saves 7 instructions in every mode;
+   `read_header` runs only for decoded messages and saves ~3 per decoded message, so it shows up only in All.
+2. **Time follows instructions only where the code is instruction-bound.** Frame: −8 % (3.78 → 3.46 ns), consistent
+   across rounds and confirmed by −5 % cycles. Sys: ~−5 %, borderline. All: −3 %, within noise — at IPC ≈ 3 it is
+   limited by `switch` mispredictions and dependency chains, so ten fewer instructions are almost free.
+3. **Variant 3 is kept.** The gain is small but the code is no more complex, and the instruction reduction is exact.
+   `be48` stays in `endian.hpp` (tested and benchmarked) but is no longer used on the hot path.
+
+---
+
+## Iteration 3 — cold error paths and inlining — 2026-11-19
+
+### Change
+
+1. **`ItchReader::next()` moved into the header, its error paths moved out of line.** Every `throw FormatError(std::format(...))`
+   is replaced by a call to a `[[noreturn]] [[gnu::cold]] [[gnu::noinline]]` function in `itch::detail`, defined in
+   `itch_reader.cpp`; the branches are marked `[[unlikely]]`. `<format>` left the header.
+2. **The same for validation:** `read_enum` (`enum_validation.hpp`) and `read_alpha_code` (`alpha_validation.hpp`) call
+   non-template cold functions defined `inline` in the header, one copy per program.
+3. **`dispatch` is declared `inline`.**
+
+### How we got there
+
+The compiler explains each decision with `-fopt-info-inline-missed`. Intermediate variants, all measured:
+
+| Variant | Result |
+|---|---|
+| LTO (`-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON`) | Mixed: Sys −22 %, All −9 %, **Frame +29 %**. `next()` still not inlined; `dispatch` was inlined into the loop, but `be64` got outlined from `next()` (+12 instructions) |
+| `next()` moved to the header as is | **Worse everywhere** (+12 instructions): still not inlined, and `be64` inside it got outlined, as with LTO |
+| Header + `[[gnu::always_inline]]` on `next()` | Upper bound for inlining: Frame 3.5 → 1.71 ns |
+| Header + cold error paths (change 1) | Inlined without forcing, and **better than the forced variant**: Frame 1.69 ns, 34 instructions |
+
+Why: GCC estimates a function's size including the code that formats and throws the exception, even though it never
+runs. Five `std::format` + `throw` blocks made the 40-instruction hot path of `next()` look too big. The same blocks,
+inlined from `read_enum` into `dispatch<AllHandler>`, made it ~500 lines of assembly with 9 copies of exception
+construction.
+
+`inline` on `dispatch` matters because GCC applies different limits: a template that is not declared `inline` gets the
+low `max-inline-insns-auto` threshold; declared `inline`, it gets `max-inline-insns-single`. Without the keyword
+`dispatch` was not inlined into the loop (`-fopt-info`: `max-inline-insns-auto limit reached`).
+
+### Results
+
+Per-message counters from fixed-iteration `perf stat` differences (exact, frequency-independent).
+`Opaque` is `BM_DispatchOpaque`: the handler copies every decoded struct into `benchmark::DoNotOptimize`, so no field
+can be optimized away (see [below](#the-allhandler-benchmark-overstates-gains)).
+
+| | Iteration 2 | Cold paths in `next()` | **+ cold validation, `inline dispatch`** | Δ cycles |
+|---|---|---|---|---:|
+| Frame | 71 instr / 19.3 cyc | 34 / 8.5 | **34 / 8.4** | **−56 %** |
+| Sys | 95 / 28.4 | 67 / 19.4 | **37 / 8.8** | **−69 %** |
+| All | 148 / 59.1 | 120 / 49.6 | **110 / 45.5** | −23 % |
+| Opaque | 131 / 58.6 | 94 / 45.0 | **83 / 42.5** | **−27 %** |
+
+Time, interleaved A/B in one session, ns/msg (the machine ran ~30 % slower than in iterations 1–2, so only the ratios
+matter): Frame 4.6 → 2.15 (−53 %), Sys 6.75 → 2.2 (−67 %), Opaque 14.2 → 10.7 (−25 %).
+
+Final figures on a quiet machine (median of 20, cv 2.4–4.7 %), after `BM_DispatchOpaque` was added to the repository:
+
+| | ns/msg | M msg/s | instr/msg | cyc/msg | IPC |
+|---|---:|---:|---:|---:|---:|
+| Frame | **1.67** | 600 | 34.0 | 8.0 | 4.23 |
+| Sys | **1.84** | 544 | 37.0 | 8.3 | 4.44 |
+| All | 8.97 | 111 | 110.8 | 43.0 | 2.58 |
+| Opaque | **8.71** | 115 | 83.8 | 40.7 | 2.06 |
+
+Against the baseline: Frame 4.2 → 1.67 ns (2.5×), Sys 5.8 → 1.84 ns (3.2×).
+
+Sys now costs Frame + 3 instructions: with `dispatch` inlined, skipping 22 uninteresting types is a single comparison.
+
+### The `AllHandler` benchmark overstates gains
+
+After change 3, `read_header` and `read_add_order_msg` were still calls inside `dispatch<AllHandler>`
+(`-fopt-info`: `inline-unit-growth limit reached` and `max-inline-insns-single limit reached`). Forcing them in looked
+promising on `BM_DispatchAll`, so three variants were measured on both benchmarks:
+
+| Variant | All, cyc/msg | Opaque, cyc/msg |
+|---|---:|---:|
+| Current | 46.5 | **42.8** |
+| `[[gnu::always_inline]]` on `read_header` and `read_add_order_msg` | 45.0 | 46.0 |
+| `-O3` | 32.2 | 44.8 |
+| `--param inline-unit-growth=200 max-inline-insns-single=400 max-inline-insns-auto=200` | 22.5 | 54.5 |
+
+`AllHandler` uses only `header.timestamp`. Once everything is inlined down to the handler, the compiler is free to skip
+computing the other fields, so a "faster" All means "more work thrown away". On the opaque benchmark none of the
+variants helps, and the raised limits make it worse (code bloat). The same effect inflated change 2: −15 % on All,
+−7.5 % on Opaque.
+
+A second trap: `inline-unit-growth` is a budget for the whole translation unit. Adding `BM_DispatchOpaque` to
+`bench_parse.cpp` changed `BM_DispatchAll`'s instruction count (103.7 → 110.1) without touching its code.
+
+### Conclusions
+
+1. **Keep cold code out of hot functions.** Moving the error paths out of line is what made `next()` and `dispatch`
+   inlinable; forcing with `always_inline` was worse.
+2. **`inline` is not only an ODR keyword for GCC:** it selects a higher inlining limit.
+3. **Do not chase inlining with `-O3` / `--param` / `always_inline`:** no gain on a realistic handler.
+4. **Benchmarks must consume what they measure.** Decoding results should be compared on the opaque benchmark;
+   `BM_DispatchAll` is a lower bound.
+
+### Next
+
+- Add `BM_DispatchOpaque` to `bench_parse.cpp` and use it as the main "decode everything" figure.
+- All/Opaque remain at ~43 cycles: look at `perf annotate` — `switch` mispredictions (0.45 per message × ~17 cycles ≈ 8
+  cycles) and struct materialization.
 
 ---
 

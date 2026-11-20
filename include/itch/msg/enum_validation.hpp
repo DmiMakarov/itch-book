@@ -12,6 +12,16 @@
 
 namespace itch::msg
 {
+
+    namespace detail
+    {
+        [[noreturn]] [[gnu::cold]] [[gnu::noinline]] inline void throw_unknown_code(std::uint8_t code, std::size_t offset)
+        {
+            throw FormatError(std::format("Unknown code in message: 0x{:02x} at offset {}",
+                                           code, offset), offset);
+        }
+    } //namespace detail
+
     template <typename T>
     concept Enum = std::is_enum_v<T>;
 
@@ -35,10 +45,9 @@ namespace itch::msg
 
         auto code_ = std::to_integer<std::uint8_t>(bytes[Offset]);
 
-        if(!valid_table[code_])
+        if(!valid_table[code_]) [[unlikely]]
         {
-            throw FormatError(std::format("Unknown code in message: 0x{:02x} at offset {}",
-                                           code_, Offset), Offset);
+            detail::throw_unknown_code(code_, Offset);
         }
 
         return static_cast<T>(code_);

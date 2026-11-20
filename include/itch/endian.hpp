@@ -53,12 +53,7 @@ namespace itch::endian
 
     constexpr std::uint64_t be48(std::span<const std::byte, 6> src) noexcept
     {
-        return (static_cast<std::uint64_t>(src[0]) << 40) |
-               (static_cast<std::uint64_t>(src[1]) << 32) |
-               (static_cast<std::uint64_t>(src[2]) << 24) |
-               (static_cast<std::uint64_t>(src[3]) << 16) |
-               (static_cast<std::uint64_t>(src[4]) << 8)  |
-               (static_cast<std::uint64_t>(src[5]));
+        return (static_cast<std::uint64_t>(be16(src.first<2>())) << 32) | static_cast<std::uint64_t>(be32(src.last<4>()));
     }
 
     constexpr std::uint64_t be64(std::span<const std::byte, 8> src) noexcept
